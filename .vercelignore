@@ -8,3 +8,5 @@ webui
 data
 exports
 *.zip
+*.pptx
+*.docx
