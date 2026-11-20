@@ -69,10 +69,9 @@ using the Python engine with JSON/CSV file persistence.
 `vercel.json` sets `outputDirectory` to `site` and applies a strict
 Content-Security-Policy.
 
-> The Vercel project is deployed via the CLI under the **cherry** team. The
-> GitHub repo could not be auto-connected because the Vercel GitHub App is not
-> installed for the `CHERRY-TEC` account; pushes therefore do not trigger
-> redeploys until that integration is enabled. Run `vercel --prod` to redeploy.
+> The Vercel project lives under the **cherry** team and is connected to this
+> GitHub repository. Pushes to `master` trigger a production deployment.
+> You can also redeploy manually with `vercel --prod`.
 
 ---
 
