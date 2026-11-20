@@ -16,6 +16,7 @@ from .config import (
     MAX_LABEL_LENGTH,
     SEED_COUNT_MAX,
     SEED_COUNT_MIN,
+    SQLITE_PATH,
     SUPPORTED_FORMATS,
     WEAK_SCORE_THRESHOLD,
 )
@@ -28,6 +29,7 @@ from .exporter import (
 )
 from .models import PasswordRecord
 from .seed_data import generate_records
+from .sqlite_store import SQLiteStore
 from .storage import CSVStore, JSONStore, StorageError
 from .summary import build_summary
 from .validators import read_choice, read_int, read_path, read_text, read_yes_no, read_password
@@ -77,10 +79,12 @@ class App:
         self,
         json_path: Path = JSON_PATH,
         csv_path: Path = CSV_PATH,
+        sqlite_path: Path = SQLITE_PATH,
         storage_format: str = "json",
     ) -> None:
         self.json_store = JSONStore(json_path)
         self.csv_store = CSVStore(csv_path)
+        self.sqlite_store = SQLiteStore(sqlite_path)
         self.storage_format = storage_format if storage_format in SUPPORTED_FORMATS else "json"
         self.records: list[PasswordRecord] = []
         self.next_id: int = 1
@@ -89,10 +93,18 @@ class App:
     # Infrastructure
     # ------------------------------------------------------------------ #
 
+    def _store_for(self, storage_format: str) -> JSONStore | CSVStore | SQLiteStore:
+        """Resolve a format name to its concrete backend instance."""
+        return {
+            "json": self.json_store,
+            "csv": self.csv_store,
+            "sqlite": self.sqlite_store,
+        }[storage_format]
+
     @property
-    def store(self) -> JSONStore | CSVStore:
+    def store(self) -> JSONStore | CSVStore | SQLiteStore:
         """Return the currently active storage backend."""
-        return self.json_store if self.storage_format == "json" else self.csv_store
+        return self._store_for(self.storage_format)
 
     def _persist(self) -> bool:
         """Save current records; return True on success."""
@@ -363,8 +375,9 @@ class App:
                 ui.success(f"Reloaded {len(records)} record(s) from {self.store.path}.")
 
     def _switch_format(self) -> None:
-        target_format = "csv" if self.storage_format == "json" else "json"
-        target_store = self.csv_store if target_format == "csv" else self.json_store
+        formats = list(SUPPORTED_FORMATS)
+        target_format = formats[(formats.index(self.storage_format) + 1) % len(formats)]
+        target_store = self._store_for(target_format)
         ui.info(f"Switching from {self.storage_format.upper()} to {target_format.upper()}...")
         target_records, warnings = target_store.load()
         self._report_warnings(warnings)

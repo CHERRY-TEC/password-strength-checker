@@ -27,6 +27,7 @@ TESTS_DIR: Path = BASE_DIR / "tests"
 
 JSON_PATH: Path = DATA_DIR / "records.json"
 CSV_PATH: Path = DATA_DIR / "records.csv"
+SQLITE_PATH: Path = DATA_DIR / "records.sqlite3"
 
 # --------------------------------------------------------------------------- #
 # Input constraints
@@ -55,4 +56,4 @@ GUESSES_PER_SECOND: float = 1.0e9
 # Environment switches
 NO_COLOR: bool = bool(os.environ.get("NO_COLOR"))
 
-SUPPORTED_FORMATS: tuple[str, ...] = ("json", "csv")
+SUPPORTED_FORMATS: tuple[str, ...] = ("json", "csv", "sqlite")

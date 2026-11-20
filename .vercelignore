@@ -1,0 +1,10 @@
+.git
+__pycache__
+*.pyc
+site/*.test.js
+tests
+psc
+webui
+data
+exports
+*.zip

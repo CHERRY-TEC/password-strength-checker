@@ -200,12 +200,18 @@ python -m webui.server --port 8765 --open
 ```
 
 `data/records.csv` uses a flat header with the analysis fields expanded into
-columns; list fields are JSON-encoded strings. Both backends are
-interchangeable via **9 → Switch storage format**.
+columns; list fields are JSON-encoded strings.
 
-Corrupt or missing files are backed up (`.corrupt.<timestamp>`) and rebuilt as
-clean templates; individual bad rows are skipped with a warning instead of
-crashing the program.
+`data/records.sqlite3` is a transactional database (`sqlite3` from the standard
+library) with an indexed `checked_at` column, row-level validation and
+automatic recovery from a corrupt file. It is the recommended backend for
+larger datasets.
+
+All three backends are interchangeable via **9 → Switch storage format** or
+`--format json|csv|sqlite`; switching migrates existing records when the target
+store is empty. Corrupt or missing files are backed up
+(`.corrupt.<timestamp>`) and rebuilt as clean templates; individual bad rows
+are skipped with a warning instead of crashing the program.
 
 ---
 
@@ -223,6 +229,7 @@ PasswordStrengthChecker/
 │   ├── analyzer.py         # scoring, heuristics, rule explanations
 │   ├── validators.py       # defensive input wrappers
 │   ├── storage.py          # JSONStore, CSVStore, atomic writes, recovery
+│   ├── sqlite_store.py     # transactional SQLite backend
 │   ├── summary.py          # metrics, alerts, distributions
 │   ├── exporter.py         # Markdown / text / CSV / PNG exports
 │   ├── ui.py               # colours, banners, tables, report rendering
@@ -237,13 +244,27 @@ PasswordStrengthChecker/
 │   ├── styles.css
 │   ├── analyzer.js         # browser port of the Python engine
 │   ├── app.js              # SPA controller + localStorage + exports
+│   ├── analyzer.test.js    # Node tests for the browser engine
 │   └── favicon.svg
+├── docs/
+│   ├── API.md              # full HTTP API reference
+│   └── SRS.md              # requirements and design decisions
+├── scripts/
+│   └── build.py            # static build validation + engine parity check
+├── .github/workflows/ci.yml  # tests + build on every push / PR
+├── package.json            # zero-dependency npm scripts
+├── run_tests.py            # runs Python + JavaScript suites
 ├── vercel.json             # outputDirectory = site, security headers
 ├── data/                   # created on first run
 ├── exports/                # generated reports
 └── tests/
     ├── test_analyzer.py
+    ├── test_models.py
     ├── test_storage.py
+    ├── test_sqlite_store.py
+    ├── test_summary.py
+    ├── test_exporter.py
+    ├── test_web_api.py
     └── test_validators.py
 ```
 
@@ -251,12 +272,28 @@ PasswordStrengthChecker/
 
 ## Testing
 
+Run everything (Python + JavaScript):
+
 ```powershell
-python -m unittest discover -s tests -v
+python run_tests.py
 ```
 
-The suite covers analysis edge cases, JSON/CSV round-trips, corrupt-file
-recovery, bad-row skipping and every input wrapper.
+Individual suites:
+
+```powershell
+python -m unittest discover -s tests -v   # Python core, models, storage, API
+npm test                                  # browser engine (Node built-in test runner)
+python scripts/build.py                   # static build + Python/JS engine parity
+```
+
+Coverage includes analysis edge cases, model coercion, all three storage
+backends, corrupt-file recovery, bad-row skipping, summaries, exports, every
+input wrapper and all HTTP endpoints (including format switching and CORS
+rejection). GitHub Actions runs compile checks, the full suite and the build
+validation on every push and PR.
+
+See [docs/API.md](docs/API.md) for the HTTP API and
+[docs/SRS.md](docs/SRS.md) for the requirements specification.
 
 ---
 

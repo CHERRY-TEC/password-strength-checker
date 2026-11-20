@@ -32,7 +32,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument(
         "--format",
-        choices=("json", "csv"),
+        choices=("json", "csv", "sqlite"),
         default="json",
         help="storage backend to use on startup (default: json)",
     )

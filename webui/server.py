@@ -34,11 +34,14 @@ from psc.config import (
     JSON_PATH,
     MAX_LABEL_LENGTH,
     MAX_PASSWORD_LENGTH,
+    SQLITE_PATH,
+    SUPPORTED_FORMATS,
     WEAK_SCORE_THRESHOLD,
 )
 from psc.exporter import export_chart_png, export_csv, export_markdown, export_text_audit
 from psc.models import PasswordRecord
 from psc.seed_data import generate_records
+from psc.sqlite_store import SQLiteStore
 from psc.storage import CSVStore, JSONStore, StorageError
 from psc.summary import build_alerts, build_summary, rating_distribution
 
@@ -61,19 +64,36 @@ LOCAL_HOSTS = {"127.0.0.1", "localhost", "::1", "::ffff:127.0.0.1"}
 class WebState:
     """Holds records and storage backends, guarded by a re-entrant lock."""
 
-    def __init__(self, storage_format: str = "json") -> None:
-        self.json_store = JSONStore(JSON_PATH)
-        self.csv_store = CSVStore(CSV_PATH)
-        self.storage_format = storage_format if storage_format in {"json", "csv"} else "json"
+    def __init__(
+        self,
+        storage_format: str = "json",
+        json_path: Path = JSON_PATH,
+        csv_path: Path = CSV_PATH,
+        sqlite_path: Path = SQLITE_PATH,
+    ) -> None:
+        self.json_store = JSONStore(json_path)
+        self.csv_store = CSVStore(csv_path)
+        self.sqlite_store = SQLiteStore(sqlite_path)
+        self.storage_format = (
+            storage_format if storage_format in SUPPORTED_FORMATS else "json"
+        )
         self.records: list[PasswordRecord] = []
         self.next_id = 1
         self.startup_warnings: list[str] = []
         self.lock = threading.RLock()
         self.load()
 
+    def store_for(self, storage_format: str) -> JSONStore | CSVStore | SQLiteStore:
+        """Resolve a format name to its concrete backend instance."""
+        return {
+            "json": self.json_store,
+            "csv": self.csv_store,
+            "sqlite": self.sqlite_store,
+        }[storage_format]
+
     @property
-    def store(self) -> JSONStore | CSVStore:
-        return self.json_store if self.storage_format == "json" else self.csv_store
+    def store(self) -> JSONStore | CSVStore | SQLiteStore:
+        return self.store_for(self.storage_format)
 
     def load(self) -> list[str]:
         """(Re)load records from the active backend."""
@@ -243,6 +263,8 @@ class Handler(BaseHTTPRequestHandler):
                         "total": len(self.state.records),
                         "json_path": str(self.state.json_store.path),
                         "csv_path": str(self.state.csv_store.path),
+                        "sqlite_path": str(self.state.sqlite_store.path),
+                        "formats": list(SUPPORTED_FORMATS),
                         "warnings": self.state.startup_warnings,
                         "max_password_length": MAX_PASSWORD_LENGTH,
                     })
@@ -415,12 +437,12 @@ class Handler(BaseHTTPRequestHandler):
 
     def _switch_format(self, data: dict) -> None:
         requested = str(data.get("format", "")).lower()
-        if requested not in {"json", "csv"}:
-            return self._error(400, "format must be 'json' or 'csv'")
+        if requested not in SUPPORTED_FORMATS:
+            return self._error(400, "format must be one of: " + ", ".join(SUPPORTED_FORMATS))
         if requested == self.state.storage_format:
             return self._json(200, {"ok": True, "format": requested, "messages": []})
 
-        target_store = self.state.csv_store if requested == "csv" else self.state.json_store
+        target_store = self.state.store_for(requested)
         target_records, messages = target_store.load()
         migrated = False
         with self.state.lock:
@@ -529,7 +551,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Password Strength Checker web interface")
     parser.add_argument("--host", default="127.0.0.1", help="bind address (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=8765, help="port (default: 8765)")
-    parser.add_argument("--format", choices=("json", "csv"), default="json")
+    parser.add_argument("--format", choices=SUPPORTED_FORMATS, default="json")
     parser.add_argument("--open", action="store_true", help="open a browser automatically")
     args = parser.parse_args(argv)
     return serve(args.host, args.port, args.format, args.open)

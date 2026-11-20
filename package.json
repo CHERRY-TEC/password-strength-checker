@@ -1,0 +1,11 @@
+{
+  "name": "password-strength-checker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Password Strength Checker - zero-dependency Python core with a browser UI",
+  "scripts": {
+    "test": "node --test site/analyzer.test.js",
+    "test:python": "python -m unittest discover -s tests",
+    "build": "python scripts/build.py"
+  }
+}

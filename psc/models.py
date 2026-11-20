@@ -182,7 +182,7 @@ class PasswordRecord:
         if record_id < 1:
             raise ValueError("record id must be positive")
 
-        label = _as_text(data.get("label"), default="Untitled", limit=60)
+        label = _as_text(data.get("label"), default="Untitled", limit=60).strip()
         if not label:
             label = "Untitled"
 
