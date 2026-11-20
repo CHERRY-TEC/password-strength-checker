@@ -52,6 +52,30 @@ function, and discarded immediately. Nothing sensitive is ever written to
 
 ---
 
+## Live deployment
+
+| Platform | Link |
+| --- | --- |
+| Live web app (Vercel) | https://password-strength-checker-theta-puce.vercel.app |
+| Source code (GitHub) | https://github.com/CHERRY-TEC/password-strength-checker |
+
+The deployed site is the self-contained build in `site/`. Vercel is serverless
+and has no writable local filesystem, so the cloud build runs the analysis in
+the browser (a faithful port of `psc/analyzer.py`, verified against the Python
+engine) and keeps record metadata in browser `localStorage`. Passwords are
+still never stored or transmitted. The local console and `webui` server keep
+using the Python engine with JSON/CSV file persistence.
+
+`vercel.json` sets `outputDirectory` to `site` and applies a strict
+Content-Security-Policy.
+
+> The Vercel project is deployed via the CLI under the **cherry** team. The
+> GitHub repo could not be auto-connected because the Vercel GitHub App is not
+> installed for the `CHERRY-TEC` account; pushes therefore do not trigger
+> redeploys until that integration is enabled. Run `vercel --prod` to redeploy.
+
+---
+
 ## Quick start
 
 ```powershell
@@ -209,6 +233,13 @@ PasswordStrengthChecker/
 │   ├── __init__.py
 │   ├── server.py           # stdlib HTTP server + JSON API
 │   └── static/             # index.html, styles.css, app.js, favicon.svg
+├── site/                   # self-contained static build deployed to Vercel
+│   ├── index.html
+│   ├── styles.css
+│   ├── analyzer.js         # browser port of the Python engine
+│   ├── app.js              # SPA controller + localStorage + exports
+│   └── favicon.svg
+├── vercel.json             # outputDirectory = site, security headers
 ├── data/                   # created on first run
 ├── exports/                # generated reports
 └── tests/

@@ -9,3 +9,5 @@ venv/
 exports/*
 !exports/.gitkeep
 !exports/*-demo.*
+
+.vercel
