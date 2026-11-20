@@ -1,0 +1,1019 @@
+{
+  "schema_version": 1,
+  "generated_by": "Password Strength Checker",
+  "saved_at": "2026-11-20T10:21:07",
+  "note": "Analysis metadata only - passwords are never stored.",
+  "records": [
+    {
+      "id": 1,
+      "label": "Campus WiFi guest",
+      "checked_at": "2026-11-18T03:35:07",
+      "analysis": {
+        "score": 25,
+        "rating": "Weak",
+        "length": 8,
+        "has_upper": false,
+        "has_lower": true,
+        "has_digit": false,
+        "has_special": false,
+        "char_classes": 1,
+        "entropy_bits": 10.58,
+        "crack_time": "less than a second",
+        "issues": [
+          "Only 1 character type(s) used",
+          "Matches or contains a common password / dictionary word"
+        ],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one digit.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid common words and well-known passwords."
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "label": "Old library card",
+      "checked_at": "2026-08-14T02:56:07",
+      "analysis": {
+        "score": 9,
+        "rating": "Very Weak",
+        "length": 6,
+        "has_upper": false,
+        "has_lower": false,
+        "has_digit": true,
+        "has_special": false,
+        "char_classes": 1,
+        "entropy_bits": 3.59,
+        "crack_time": "less than a second",
+        "issues": [
+          "Too short (6 characters; 12+ recommended)",
+          "Only 1 character type(s) used",
+          "Matches or contains a common password / dictionary word",
+          "Contains a character sequence or keyboard pattern"
+        ],
+        "suggestions": [
+          "Use at least 12 characters.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one lowercase letter.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid common words and well-known passwords."
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "label": "Dorm router",
+      "checked_at": "2026-10-09T09:36:07",
+      "analysis": {
+        "score": 9,
+        "rating": "Very Weak",
+        "length": 6,
+        "has_upper": false,
+        "has_lower": true,
+        "has_digit": false,
+        "has_special": false,
+        "char_classes": 1,
+        "entropy_bits": 5.08,
+        "crack_time": "less than a second",
+        "issues": [
+          "Too short (6 characters; 12+ recommended)",
+          "Only 1 character type(s) used",
+          "Matches or contains a common password / dictionary word",
+          "Contains a character sequence or keyboard pattern"
+        ],
+        "suggestions": [
+          "Use at least 12 characters.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one digit.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid common words and well-known passwords."
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "label": "Club signup",
+      "checked_at": "2026-11-04T09:23:07",
+      "analysis": {
+        "score": 14,
+        "rating": "Very Weak",
+        "length": 6,
+        "has_upper": false,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": false,
+        "char_classes": 2,
+        "entropy_bits": 5.58,
+        "crack_time": "less than a second",
+        "issues": [
+          "Too short (6 characters; 12+ recommended)",
+          "Only 2 character type(s) used",
+          "Matches or contains a common password / dictionary word",
+          "Contains a character sequence or keyboard pattern"
+        ],
+        "suggestions": [
+          "Use at least 12 characters.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid common words and well-known passwords.",
+          "Avoid sequences such as 123, abc or qwerty."
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "label": "Lab workstation",
+      "checked_at": "2026-10-30T06:24:07",
+      "analysis": {
+        "score": 17,
+        "rating": "Very Weak",
+        "length": 7,
+        "has_upper": false,
+        "has_lower": true,
+        "has_digit": false,
+        "has_special": false,
+        "char_classes": 1,
+        "entropy_bits": 9.17,
+        "crack_time": "less than a second",
+        "issues": [
+          "Too short (7 characters; 12+ recommended)",
+          "Only 1 character type(s) used",
+          "Matches or contains a common password / dictionary word"
+        ],
+        "suggestions": [
+          "Use at least 12 characters.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one digit.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid common words and well-known passwords."
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "label": "Alumni portal",
+      "checked_at": "2026-11-02T07:17:07",
+      "analysis": {
+        "score": 30,
+        "rating": "Weak",
+        "length": 8,
+        "has_upper": false,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": false,
+        "char_classes": 2,
+        "entropy_bits": 11.63,
+        "crack_time": "less than a second",
+        "issues": [
+          "Only 2 character type(s) used",
+          "Matches or contains a common password / dictionary word"
+        ],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid common words and well-known passwords."
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "label": "Admin console",
+      "checked_at": "2026-08-28T23:58:07",
+      "analysis": {
+        "score": 15,
+        "rating": "Very Weak",
+        "length": 5,
+        "has_upper": false,
+        "has_lower": true,
+        "has_digit": false,
+        "has_special": false,
+        "char_classes": 1,
+        "entropy_bits": 7.05,
+        "crack_time": "less than a second",
+        "issues": [
+          "Too short (5 characters; 12+ recommended)",
+          "Only 1 character type(s) used",
+          "Matches or contains a common password / dictionary word"
+        ],
+        "suggestions": [
+          "Use at least 12 characters.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one digit.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid common words and well-known passwords."
+        ]
+      }
+    },
+    {
+      "id": 8,
+      "label": "Print kiosk",
+      "checked_at": "2026-08-30T08:26:07",
+      "analysis": {
+        "score": 7,
+        "rating": "Very Weak",
+        "length": 6,
+        "has_upper": false,
+        "has_lower": false,
+        "has_digit": true,
+        "has_special": false,
+        "char_classes": 1,
+        "entropy_bits": 3.49,
+        "crack_time": "less than a second",
+        "issues": [
+          "Too short (6 characters; 12+ recommended)",
+          "Only 1 character type(s) used",
+          "Matches or contains a common password / dictionary word",
+          "High character repetition (83%)"
+        ],
+        "suggestions": [
+          "Use at least 12 characters.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one lowercase letter.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid common words and well-known passwords."
+        ]
+      }
+    },
+    {
+      "id": 9,
+      "label": "Shared calendar",
+      "checked_at": "2026-10-25T16:05:07",
+      "analysis": {
+        "score": 23,
+        "rating": "Weak",
+        "length": 8,
+        "has_upper": false,
+        "has_lower": true,
+        "has_digit": false,
+        "has_special": false,
+        "char_classes": 1,
+        "entropy_bits": 9.87,
+        "crack_time": "less than a second",
+        "issues": [
+          "Only 1 character type(s) used",
+          "Matches or contains a common password / dictionary word"
+        ],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one digit.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid common words and well-known passwords."
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "label": "Sports forum",
+      "checked_at": "2026-09-30T23:42:07",
+      "analysis": {
+        "score": 23,
+        "rating": "Weak",
+        "length": 8,
+        "has_upper": false,
+        "has_lower": true,
+        "has_digit": false,
+        "has_special": false,
+        "char_classes": 1,
+        "entropy_bits": 9.87,
+        "crack_time": "less than a second",
+        "issues": [
+          "Only 1 character type(s) used",
+          "Matches or contains a common password / dictionary word"
+        ],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one digit.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid common words and well-known passwords."
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "label": "Music account",
+      "checked_at": "2026-10-29T14:02:07",
+      "analysis": {
+        "score": 25,
+        "rating": "Weak",
+        "length": 8,
+        "has_upper": false,
+        "has_lower": true,
+        "has_digit": false,
+        "has_special": false,
+        "char_classes": 1,
+        "entropy_bits": 10.58,
+        "crack_time": "less than a second",
+        "issues": [
+          "Only 1 character type(s) used",
+          "Matches or contains a common password / dictionary word"
+        ],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one digit.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid common words and well-known passwords."
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "label": "Guest laptop",
+      "checked_at": "2026-09-29T08:52:07",
+      "analysis": {
+        "score": 17,
+        "rating": "Very Weak",
+        "length": 6,
+        "has_upper": false,
+        "has_lower": true,
+        "has_digit": false,
+        "has_special": false,
+        "char_classes": 1,
+        "entropy_bits": 8.46,
+        "crack_time": "less than a second",
+        "issues": [
+          "Too short (6 characters; 12+ recommended)",
+          "Only 1 character type(s) used",
+          "Matches or contains a common password / dictionary word"
+        ],
+        "suggestions": [
+          "Use at least 12 characters.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one digit.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid common words and well-known passwords."
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "label": "Weather app",
+      "checked_at": "2026-09-23T17:06:07",
+      "analysis": {
+        "score": 17,
+        "rating": "Very Weak",
+        "length": 6,
+        "has_upper": false,
+        "has_lower": true,
+        "has_digit": false,
+        "has_special": false,
+        "char_classes": 1,
+        "entropy_bits": 8.46,
+        "crack_time": "less than a second",
+        "issues": [
+          "Too short (6 characters; 12+ recommended)",
+          "Only 1 character type(s) used",
+          "Matches or contains a common password / dictionary word"
+        ],
+        "suggestions": [
+          "Use at least 12 characters.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one digit.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid common words and well-known passwords."
+        ]
+      }
+    },
+    {
+      "id": 14,
+      "label": "Course forum",
+      "checked_at": "2026-10-18T04:26:07",
+      "analysis": {
+        "score": 31,
+        "rating": "Weak",
+        "length": 8,
+        "has_upper": false,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": false,
+        "char_classes": 2,
+        "entropy_bits": 23.26,
+        "crack_time": "less than a second",
+        "issues": [
+          "Only 2 character type(s) used",
+          "Contains a character sequence or keyboard pattern"
+        ],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid sequences such as 123, abc or qwerty."
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "label": "Library catalogue",
+      "checked_at": "2026-09-09T09:15:07",
+      "analysis": {
+        "score": 74,
+        "rating": "Strong",
+        "length": 11,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": false,
+        "char_classes": 3,
+        "entropy_bits": 59.54,
+        "crack_time": "about 13 years",
+        "issues": [],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 16,
+      "label": "Email backup",
+      "checked_at": "2026-11-15T14:31:07",
+      "analysis": {
+        "score": 81,
+        "rating": "Very Strong",
+        "length": 11,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 65.55,
+        "crack_time": "about 856 years",
+        "issues": [],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 17,
+      "label": "Cloud drive",
+      "checked_at": "2026-08-10T06:29:07",
+      "analysis": {
+        "score": 43,
+        "rating": "Fair",
+        "length": 8,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 14.75,
+        "crack_time": "less than a second",
+        "issues": [
+          "Matches or contains a common password / dictionary word"
+        ],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Avoid common words and well-known passwords."
+        ]
+      }
+    },
+    {
+      "id": 18,
+      "label": "Banking demo",
+      "checked_at": "2026-10-31T01:46:07",
+      "analysis": {
+        "score": 85,
+        "rating": "Very Strong",
+        "length": 11,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 68.82,
+        "crack_time": "about 8 thousand years",
+        "issues": [],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 19,
+      "label": "Research wiki",
+      "checked_at": "2026-09-27T23:22:07",
+      "analysis": {
+        "score": 83,
+        "rating": "Very Strong",
+        "length": 12,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 68.82,
+        "crack_time": "about 8 thousand years",
+        "issues": [],
+        "suggestions": [
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 20,
+      "label": "Dev repository",
+      "checked_at": "2026-11-10T22:42:07",
+      "analysis": {
+        "score": 83,
+        "rating": "Very Strong",
+        "length": 10,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 65.55,
+        "crack_time": "about 856 years",
+        "issues": [],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 21,
+      "label": "VPN client",
+      "checked_at": "2026-09-12T03:29:07",
+      "analysis": {
+        "score": 80,
+        "rating": "Very Strong",
+        "length": 10,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 62.27,
+        "crack_time": "about 88 years",
+        "issues": [],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 22,
+      "label": "Phone hotspot",
+      "checked_at": "2026-08-05T07:19:07",
+      "analysis": {
+        "score": 85,
+        "rating": "Very Strong",
+        "length": 11,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 68.82,
+        "crack_time": "about 8 thousand years",
+        "issues": [],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 23,
+      "label": "Gaming account",
+      "checked_at": "2026-08-19T12:52:07",
+      "analysis": {
+        "score": 48,
+        "rating": "Fair",
+        "length": 14,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": false,
+        "char_classes": 3,
+        "entropy_bits": 22.33,
+        "crack_time": "less than a second",
+        "issues": [
+          "Matches or contains a common password / dictionary word"
+        ],
+        "suggestions": [
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid common words and well-known passwords."
+        ]
+      }
+    },
+    {
+      "id": 24,
+      "label": "Photo storage",
+      "checked_at": "2026-08-08T16:51:07",
+      "analysis": {
+        "score": 85,
+        "rating": "Very Strong",
+        "length": 11,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 68.82,
+        "crack_time": "about 8 thousand years",
+        "issues": [],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 25,
+      "label": "Notebook app",
+      "checked_at": "2026-09-01T05:23:07",
+      "analysis": {
+        "score": 76,
+        "rating": "Strong",
+        "length": 9,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 55.71,
+        "crack_time": "about 341 days",
+        "issues": [],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 26,
+      "label": "Messaging app",
+      "checked_at": "2026-10-23T06:10:07",
+      "analysis": {
+        "score": 85,
+        "rating": "Very Strong",
+        "length": 11,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 68.82,
+        "crack_time": "about 8 thousand years",
+        "issues": [],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 27,
+      "label": "Shopping cart",
+      "checked_at": "2026-08-01T18:10:07",
+      "analysis": {
+        "score": 80,
+        "rating": "Very Strong",
+        "length": 10,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 62.27,
+        "crack_time": "about 88 years",
+        "issues": [],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 28,
+      "label": "Fitness tracker",
+      "checked_at": "2026-11-14T16:57:07",
+      "analysis": {
+        "score": 92,
+        "rating": "Very Strong",
+        "length": 12,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 78.66,
+        "crack_time": "over 7,571 thousand years",
+        "issues": [],
+        "suggestions": [
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 29,
+      "label": "Recipe box",
+      "checked_at": "2026-11-16T05:52:07",
+      "analysis": {
+        "score": 77,
+        "rating": "Strong",
+        "length": 10,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 58.99,
+        "crack_time": "about 9 years",
+        "issues": [],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 30,
+      "label": "Travel planner",
+      "checked_at": "2026-10-31T03:42:07",
+      "analysis": {
+        "score": 85,
+        "rating": "Very Strong",
+        "length": 11,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 68.82,
+        "crack_time": "about 8 thousand years",
+        "issues": [],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 31,
+      "label": "Personal wiki",
+      "checked_at": "2026-09-25T08:18:07",
+      "analysis": {
+        "score": 69,
+        "rating": "Strong",
+        "length": 28,
+        "has_upper": false,
+        "has_lower": true,
+        "has_digit": false,
+        "has_special": false,
+        "char_classes": 1,
+        "entropy_bits": 96.36,
+        "crack_time": "longer than the age of the universe",
+        "issues": [
+          "Only 1 character type(s) used",
+          "High character repetition (54%)"
+        ],
+        "suggestions": [
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one digit.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid repeated characters."
+        ]
+      }
+    },
+    {
+      "id": 32,
+      "label": "Password manager",
+      "checked_at": "2026-11-01T08:21:07",
+      "analysis": {
+        "score": 100,
+        "rating": "Very Strong",
+        "length": 16,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 104.87,
+        "crack_time": "longer than the age of the universe",
+        "issues": [],
+        "suggestions": [
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 33,
+      "label": "Server SSH key",
+      "checked_at": "2026-11-03T12:06:07",
+      "analysis": {
+        "score": 100,
+        "rating": "Very Strong",
+        "length": 17,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 111.43,
+        "crack_time": "longer than the age of the universe",
+        "issues": [],
+        "suggestions": [
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 34,
+      "label": "Encryption test",
+      "checked_at": "2026-11-05T07:51:07",
+      "analysis": {
+        "score": 100,
+        "rating": "Very Strong",
+        "length": 16,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 104.87,
+        "crack_time": "longer than the age of the universe",
+        "issues": [],
+        "suggestions": [
+          "Good work! Use a unique password for each account."
+        ]
+      }
+    },
+    {
+      "id": 35,
+      "label": "Security audit",
+      "checked_at": "2026-09-01T16:36:07",
+      "analysis": {
+        "score": 59,
+        "rating": "Fair",
+        "length": 15,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 58.99,
+        "crack_time": "about 9 years",
+        "issues": [
+          "Contains a character sequence or keyboard pattern"
+        ],
+        "suggestions": [
+          "Avoid sequences such as 123, abc or qwerty."
+        ]
+      }
+    },
+    {
+      "id": 36,
+      "label": "Strong passphrase",
+      "checked_at": "2026-09-27T13:28:07",
+      "analysis": {
+        "score": 92,
+        "rating": "Very Strong",
+        "length": 25,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": true,
+        "char_classes": 4,
+        "entropy_bits": 137.65,
+        "crack_time": "longer than the age of the universe",
+        "issues": [
+          "High character repetition (32%)"
+        ],
+        "suggestions": [
+          "Avoid repeated characters."
+        ]
+      }
+    },
+    {
+      "id": 37,
+      "label": "Boundary: single char",
+      "checked_at": "2026-09-10T18:47:07",
+      "analysis": {
+        "score": 17,
+        "rating": "Very Weak",
+        "length": 1,
+        "has_upper": false,
+        "has_lower": true,
+        "has_digit": false,
+        "has_special": false,
+        "char_classes": 1,
+        "entropy_bits": 4.7,
+        "crack_time": "less than a second",
+        "issues": [
+          "Too short (1 character; 12+ recommended)",
+          "Only 1 character type(s) used"
+        ],
+        "suggestions": [
+          "Use at least 12 characters.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one digit.",
+          "Add at least one symbol (e.g. ! @ # $)."
+        ]
+      }
+    },
+    {
+      "id": 38,
+      "label": "Boundary: two chars",
+      "checked_at": "2026-10-26T10:54:07",
+      "analysis": {
+        "score": 26,
+        "rating": "Weak",
+        "length": 2,
+        "has_upper": false,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": false,
+        "char_classes": 2,
+        "entropy_bits": 10.34,
+        "crack_time": "less than a second",
+        "issues": [
+          "Too short (2 characters; 12+ recommended)",
+          "Only 2 character type(s) used"
+        ],
+        "suggestions": [
+          "Use at least 12 characters.",
+          "Mix uppercase, lowercase, digits and symbols.",
+          "Add at least one uppercase letter.",
+          "Add at least one symbol (e.g. ! @ # $)."
+        ]
+      }
+    },
+    {
+      "id": 39,
+      "label": "Boundary: eight chars",
+      "checked_at": "2026-10-12T09:28:07",
+      "analysis": {
+        "score": 40,
+        "rating": "Fair",
+        "length": 8,
+        "has_upper": true,
+        "has_lower": true,
+        "has_digit": true,
+        "has_special": false,
+        "char_classes": 3,
+        "entropy_bits": 28.58,
+        "crack_time": "less than a second",
+        "issues": [
+          "Contains a character sequence or keyboard pattern"
+        ],
+        "suggestions": [
+          "Aim for 12 or more characters for better resilience.",
+          "Add at least one symbol (e.g. ! @ # $).",
+          "Avoid sequences such as 123, abc or qwerty."
+        ]
+      }
+    },
+    {
+      "id": 40,
+      "label": "Edge: empty password",
+      "checked_at": "2026-08-14T12:20:07",
+      "analysis": {
+        "score": 0,
+        "rating": "Very Weak",
+        "length": 0,
+        "has_upper": false,
+        "has_lower": false,
+        "has_digit": false,
+        "has_special": false,
+        "char_classes": 0,
+        "entropy_bits": 0.0,
+        "crack_time": "less than a second",
+        "issues": [
+          "Empty password"
+        ],
+        "suggestions": [
+          "Choose a password with at least 12 characters."
+        ]
+      }
+    }
+  ]
+}

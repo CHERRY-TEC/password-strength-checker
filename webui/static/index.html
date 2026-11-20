@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Password Strength Checker</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="glow glow-a" aria-hidden="true"></div>
+  <div class="glow glow-b" aria-hidden="true"></div>
+
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="10" width="16" height="11" rx="2.5"></rect>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+            <path d="M12 14v3"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">Password Strength Checker</div>
+          <div class="brand-sub">LOCAL ANALYSIS · NO PASSWORDS STORED</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="chip" id="storageChip">JSON</span>
+        <span class="chip chip-good"><span class="pulse"></span>Local server</span>
+      </div>
+    </header>
+
+    <nav class="tabs" id="tabs" aria-label="Main navigation">
+      <button class="tab active" data-tab="check">Check</button>
+      <button class="tab" data-tab="records">Records</button>
+      <button class="tab" data-tab="analytics">Analytics</button>
+      <button class="tab" data-tab="tools">Tools</button>
+    </nav>
+
+    <main>
+      <!-- ==================== CHECK ==================== -->
+      <section class="panel active" id="panel-check">
+        <div class="hero">
+          <div>
+            <h1>Know your password's strength.</h1>
+            <p class="lead">Analysis runs on this machine. The password is held in memory only — nothing is written to disk until you choose to save the result.</p>
+          </div>
+          <div class="hero-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 3 4.5 6v5.5c0 4.6 3.1 8.4 7.5 9.5 4.4-1.1 7.5-4.9 7.5-9.5V6L12 3Z"></path>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+            <span>100% local</span>
+          </div>
+        </div>
+
+        <div class="grid check-grid">
+          <div class="card">
+            <div class="card-head">
+              <h2>New check</h2>
+              <span class="tag">Step 1</span>
+            </div>
+
+            <label class="field">
+              <span>Label / account <small>Identifies the record — never enter the password here</small></span>
+              <input id="labelInput" type="text" maxlength="60" placeholder="e.g. Campus WiFi" autocomplete="off">
+            </label>
+
+            <label class="field">
+              <span>Password</span>
+              <div class="input-wrap">
+                <input id="passwordInput" type="password" maxlength="256" placeholder="Type a password to analyse" autocomplete="new-password">
+                <button type="button" class="icon-btn" id="togglePassword" aria-label="Show password" title="Show / hide password">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                </button>
+              </div>
+            </label>
+
+            <div class="meter" id="meter">
+              <div class="meter-head">
+                <span id="meterLabel">Waiting for input</span>
+                <span id="meterScore">—</span>
+              </div>
+              <div class="meter-track"><div class="meter-fill" id="meterFill"></div></div>
+              <p class="meter-note" id="meterNote">Live preview is analysed on the local server without saving.</p>
+            </div>
+
+            <div class="actions">
+              <button class="btn btn-ghost" id="previewBtn">Analyse only</button>
+              <button class="btn btn-primary" id="saveBtn" disabled>Save check</button>
+            </div>
+            <p class="fineprint">Passwords go only to the local loopback server, are processed in memory, and are discarded immediately.</p>
+          </div>
+
+          <div class="card result-card">
+            <div class="card-head">
+              <h2>Result</h2>
+              <span class="tag" id="resultTag">No analysis yet</span>
+            </div>
+
+            <div class="empty-state" id="emptyState">
+              <div class="empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3 4.5 6v5.5c0 4.6 3.1 8.4 7.5 9.5 4.4-1.1 7.5-4.9 7.5-9.5V6L12 3Z"></path>
+                  <path d="M9.5 12.5 11 14l3.7-4"></path>
+                </svg>
+              </div>
+              <h3>Your result will appear here</h3>
+              <p>Enter a password on the left for an instant local analysis.</p>
+            </div>
+
+            <div class="result-body hidden" id="resultBody">
+              <div class="score-row">
+                <div class="ring-wrap" id="ringWrap"></div>
+                <div class="score-copy">
+                  <div class="rating-badge" id="ratingBadge">—</div>
+                  <p id="verdictText"></p>
+                  <div class="flag hidden" id="weakFlag">Weak password threshold reached</div>
+                </div>
+              </div>
+
+              <div class="facts" id="factsGrid"></div>
+
+              <div class="result-cols">
+                <div>
+                  <h3 class="mini-head">Issues found</h3>
+                  <ul id="issuesList" class="list issues"></ul>
+                </div>
+                <div>
+                  <h3 class="mini-head">Suggestions</h3>
+                  <ul id="suggestionsList" class="list suggestions"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== RECORDS ==================== -->
+      <section class="panel" id="panel-records">
+        <h1>Records</h1>
+        <p class="lead">Search, filter and manage saved analyses.</p>
+
+        <div class="card">
+          <div class="filters">
+            <input id="searchInput" type="search" placeholder="Search label, rating or issues…">
+            <select id="ratingFilter" aria-label="Filter by rating">
+              <option value="">All ratings</option>
+              <option>Very Strong</option>
+              <option>Strong</option>
+              <option>Fair</option>
+              <option>Weak</option>
+              <option>Very Weak</option>
+            </select>
+            <input id="minScore" type="number" min="0" max="100" placeholder="Min score" aria-label="Minimum score">
+            <button class="btn btn-ghost" id="clearFilters">Clear</button>
+          </div>
+
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th><th>Label</th><th>Checked</th><th>Score</th>
+                  <th>Rating</th><th>Length</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="recordsBody"></tbody>
+            </table>
+          </div>
+
+          <div class="table-foot">
+            <span id="recordsInfo">Loading…</span>
+            <div class="pager">
+              <button class="btn btn-mini" id="prevPage">Prev</button>
+              <span id="pageInfo">1 / 1</span>
+              <button class="btn btn-mini" id="nextPage">Next</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== ANALYTICS ==================== -->
+      <section class="panel" id="panel-analytics">
+        <h1>Analytics</h1>
+        <p class="lead">Aggregate metrics and threshold indicators across all records.</p>
+
+        <div class="metrics" id="metricCards"></div>
+
+        <div class="grid two">
+          <div class="card"><h2>Rating distribution</h2><div id="ratingBars" class="bars"></div></div>
+          <div class="card"><h2>Character class coverage</h2><div id="coverageBars" class="bars"></div></div>
+          <div class="card"><h2>Most common issues</h2><div id="issueBars" class="bars"></div></div>
+          <div class="card"><h2>Recent activity</h2><div id="activityBars" class="bars"></div></div>
+        </div>
+
+        <div class="card">
+          <h2>Threshold indicators</h2>
+          <div id="alerts" class="alerts"></div>
+          <div class="extremes" id="extremes"></div>
+        </div>
+      </section>
+
+      <!-- ==================== TOOLS ==================== -->
+      <section class="panel" id="panel-tools">
+        <h1>Tools</h1>
+        <p class="lead">Dataset utilities, storage controls and report exports.</p>
+
+        <div class="grid two">
+          <div class="card">
+            <h2>Seed sample data</h2>
+            <p class="muted">Generate realistic records with boundary and edge cases for a demo.</p>
+            <div class="inline-form">
+              <input id="seedCount" type="number" min="1" max="200" value="40" aria-label="Number of sample records">
+              <label class="check"><input id="seedReplace" type="checkbox"> Replace existing records</label>
+            </div>
+            <button class="btn btn-primary" id="seedBtn">Generate records</button>
+          </div>
+
+          <div class="card">
+            <h2>Bulk CSV import</h2>
+            <p class="muted">Validate a legacy dataset row by row. Invalid rows are reported, not written.</p>
+            <input id="importPath" type="text" value="data/legacy_import.csv" placeholder="data/legacy_import.csv">
+            <button class="btn btn-ghost" id="importBtn">Import CSV</button>
+          </div>
+
+          <div class="card">
+            <h2>Storage</h2>
+            <p class="muted" id="storageDescription">Loading…</p>
+            <div class="segmented" id="formatSwitch">
+              <button data-format="json">JSON</button>
+              <button data-format="csv">CSV</button>
+            </div>
+            <button class="btn btn-ghost" id="reloadBtn">Reload from disk</button>
+          </div>
+
+          <div class="card">
+            <h2>Export reports</h2>
+            <p class="muted">Download a formatted report for external review.</p>
+            <div class="export-grid">
+              <button class="btn btn-ghost" data-export="md">Markdown</button>
+              <button class="btn btn-ghost" data-export="txt">Audit log</button>
+              <button class="btn btn-ghost" data-export="csv">CSV report</button>
+              <button class="btn btn-ghost" data-export="png">PNG chart</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Basic password strength rules</h2>
+          <div id="rulesList" class="rules"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>Password Strength Checker · v1.0</span>
+      <span>Analysis engine: Python standard library · Frontend: vanilla HTML/CSS/JS</span>
+    </footer>
+  </div>
+
+  <div class="modal hidden" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <div class="modal-backdrop" data-close="1"></div>
+    <div class="modal-card">
+      <div class="card-head">
+        <h2 id="detailTitle">Record detail</h2>
+        <button class="icon-btn" id="closeModal" aria-label="Close">✕</button>
+      </div>
+      <div id="detailContent"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

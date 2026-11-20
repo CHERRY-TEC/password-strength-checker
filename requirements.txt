@@ -1,0 +1,4 @@
+# Core application: Python 3.10+ standard library only (no required packages).
+#
+# Optional, only needed for the PNG chart export (menu 5 -> option 4):
+#   matplotlib>=3.7
