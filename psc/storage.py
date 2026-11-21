@@ -24,6 +24,7 @@ from typing import Any
 
 from .config import APP_NAME, SCHEMA_VERSION
 from .models import PasswordRecord
+from .patterns import StorageStrategy
 
 CSV_FIELDS: tuple[str, ...] = (
     "id",
@@ -41,6 +42,7 @@ CSV_FIELDS: tuple[str, ...] = (
     "crack_time",
     "issues",
     "suggestions",
+    "patterns",
 )
 
 
@@ -104,6 +106,7 @@ def _row_from_csv(row: dict[str, str]) -> dict[str, Any]:
             "crack_time": row.get("crack_time", ""),
             "issues": as_list(row.get("issues", "")),
             "suggestions": as_list(row.get("suggestions", "")),
+            "patterns": as_list(row.get("patterns", "")),
         },
     }
 
@@ -127,6 +130,7 @@ def _row_to_csv(record: PasswordRecord) -> dict[str, str]:
         "crack_time": analysis["crack_time"],
         "issues": json.dumps(analysis["issues"], ensure_ascii=False),
         "suggestions": json.dumps(analysis["suggestions"], ensure_ascii=False),
+        "patterns": json.dumps(analysis["patterns"], ensure_ascii=False),
     }
 
 
@@ -134,11 +138,15 @@ def _row_to_csv(record: PasswordRecord) -> dict[str, str]:
 # JSON backend
 # --------------------------------------------------------------------------- #
 
-class JSONStore:
+class JSONStore(StorageStrategy):
     """Read/write records from a single structured JSON document."""
 
     def __init__(self, path: Path) -> None:
         self.path = Path(path)
+
+    @property
+    def name(self) -> str:
+        return "json"
 
     def exists(self) -> bool:
         return self.path.is_file()
@@ -230,11 +238,15 @@ class JSONStore:
 # CSV backend
 # --------------------------------------------------------------------------- #
 
-class CSVStore:
+class CSVStore(StorageStrategy):
     """Read/write records from a flat CSV file with header validation."""
 
     def __init__(self, path: Path) -> None:
         self.path = Path(path)
+
+    @property
+    def name(self) -> str:
+        return "csv"
 
     def exists(self) -> bool:
         return self.path.is_file()

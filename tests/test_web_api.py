@@ -1,5 +1,6 @@
 """End-to-end tests for the local JSON HTTP API."""
 
+import http.cookiejar
 import json
 import tempfile
 import threading
@@ -39,22 +40,32 @@ class WebAPITests(unittest.TestCase):
         cls.temp_dir.cleanup()
 
     def setUp(self):
-        """Give every test a clean, JSON-backed dataset."""
+        """Give every test a clean dataset and a fresh CSRF session."""
         with self.state.lock:
             self.state.storage_format = "json"
             self.state.records = []
             self.state.next_id = 1
             self.state.save()
+        self.cookies = http.cookiejar.CookieJar()
+        self.opener = urllib.request.build_opener(
+            urllib.request.HTTPCookieProcessor(self.cookies)
+        )
+        self.opener.open(self.base_url + "/", timeout=10).close()
+        self.csrf = next(
+            (cookie.value for cookie in self.cookies if cookie.name == "psc_csrf"), ""
+        )
 
-    def request(self, path, method="GET", body=None, headers=None):
+    def request(self, path, method="GET", body=None, headers=None, csrf=True):
         data = json.dumps(body).encode("utf-8") if body is not None else None
         request_headers = dict(headers or {})
         if data is not None:
             request_headers["Content-Type"] = "application/json"
+        if csrf and method in ("POST", "DELETE"):
+            request_headers["X-CSRF-Token"] = self.csrf
         request = urllib.request.Request(
             self.base_url + path, data=data, headers=request_headers, method=method
         )
-        with urllib.request.urlopen(request, timeout=10) as response:
+        with self.opener.open(request, timeout=10) as response:
             return response.status, dict(response.headers), response.read()
 
     def test_static_index_and_assets(self):
@@ -156,6 +167,33 @@ class WebAPITests(unittest.TestCase):
         status, _, body = self.request("/api/reload", "POST", {})
         self.assertEqual(status, 200)
         self.assertIn("total", json.loads(body))
+
+    def test_csrf_token_is_required_for_writes(self):
+        with self.assertRaises(urllib.error.HTTPError) as caught:
+            self.request("/api/analyze", "POST", {"password": "x", "persist": False}, csrf=False)
+        self.assertEqual(caught.exception.code, 403)
+
+    def test_bearer_token_is_required_when_configured(self):
+        original = getattr(self.server, "auth_token", None)
+        self.server.auth_token = "secret-token"
+        try:
+            with self.assertRaises(urllib.error.HTTPError) as caught:
+                self.request("/api/state")
+            self.assertEqual(caught.exception.code, 401)
+
+            status, _, body = self.request(
+                "/api/state", headers={"Authorization": "Bearer secret-token"}
+            )
+            self.assertEqual(status, 200)
+            self.assertTrue(json.loads(body)["auth_required"])
+
+            status, _, _ = self.request(
+                "/api/analyze", "POST", {"password": "x", "persist": False},
+                headers={"Authorization": "Bearer secret-token"},
+            )
+            self.assertEqual(status, 200)
+        finally:
+            self.server.auth_token = original
 
     def test_cross_origin_post_is_rejected(self):
         with self.assertRaises(urllib.error.HTTPError) as caught:

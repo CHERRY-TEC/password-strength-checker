@@ -9,8 +9,36 @@ const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => 
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
 }[char]));
 
+function readCookie(name) {
+  const parts = document.cookie.split(';');
+  for (const part of parts) {
+    const [key, ...rest] = part.trim().split('=');
+    if (key === name) return rest.join('=');
+  }
+  return '';
+}
+
+function authHeaders() {
+  const headers = {};
+  const csrf = readCookie('psc_csrf');
+  if (csrf) headers['X-CSRF-Token'] = csrf;
+  const token = sessionStorage.getItem('psc_token');
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  return headers;
+}
+
 async function api(path, options = {}) {
-  const response = await fetch(path, { cache: 'no-store', ...options });
+  const headers = { ...authHeaders(), ...(options.headers || {}) };
+  const response = await fetch(path, { cache: 'no-store', ...options, headers });
+
+  if (response.status === 401 && !options._retried) {
+    const token = window.prompt('Enter the API token shown in the server console:');
+    if (token) {
+      sessionStorage.setItem('psc_token', token);
+      return api(path, { ...options, _retried: true });
+    }
+  }
+
   const contentType = response.headers.get('content-type') || '';
   const payload = contentType.includes('json')
     ? await response.json()
@@ -24,7 +52,7 @@ async function api(path, options = {}) {
 function post(path, body) {
   return api(path, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify(body),
   });
 }

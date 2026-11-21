@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "generated_by": "Password Strength Checker",
-  "saved_at": "2026-11-20T10:21:07",
+  "saved_at": "2026-11-21T10:19:50",
   "note": "Analysis metadata only - passwords are never stored.",
   "records": [
     {
       "id": 1,
       "label": "Campus WiFi guest",
-      "checked_at": "2026-11-18T03:35:07",
+      "checked_at": "2026-11-19T03:33:50",
       "analysis": {
         "score": 25,
         "rating": "Weak",
@@ -30,13 +30,14 @@
           "Add at least one digit.",
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid common words and well-known passwords."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 2,
       "label": "Old library card",
-      "checked_at": "2026-08-14T02:56:07",
+      "checked_at": "2026-08-15T02:54:50",
       "analysis": {
         "score": 9,
         "rating": "Very Weak",
@@ -52,7 +53,8 @@
           "Too short (6 characters; 12+ recommended)",
           "Only 1 character type(s) used",
           "Matches or contains a common password / dictionary word",
-          "Contains a character sequence or keyboard pattern"
+          "Contains a character sequence or keyboard pattern",
+          "Contains a keyboard walk pattern"
         ],
         "suggestions": [
           "Use at least 12 characters.",
@@ -61,13 +63,16 @@
           "Add at least one lowercase letter.",
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid common words and well-known passwords."
+        ],
+        "patterns": [
+          "spatial"
         ]
       }
     },
     {
       "id": 3,
       "label": "Dorm router",
-      "checked_at": "2026-10-09T09:36:07",
+      "checked_at": "2026-10-10T09:34:50",
       "analysis": {
         "score": 9,
         "rating": "Very Weak",
@@ -83,7 +88,8 @@
           "Too short (6 characters; 12+ recommended)",
           "Only 1 character type(s) used",
           "Matches or contains a common password / dictionary word",
-          "Contains a character sequence or keyboard pattern"
+          "Contains a character sequence or keyboard pattern",
+          "Contains a keyboard walk pattern"
         ],
         "suggestions": [
           "Use at least 12 characters.",
@@ -92,13 +98,16 @@
           "Add at least one digit.",
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid common words and well-known passwords."
+        ],
+        "patterns": [
+          "spatial"
         ]
       }
     },
     {
       "id": 4,
       "label": "Club signup",
-      "checked_at": "2026-11-04T09:23:07",
+      "checked_at": "2026-11-05T09:21:50",
       "analysis": {
         "score": 14,
         "rating": "Very Weak",
@@ -123,13 +132,14 @@
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid common words and well-known passwords.",
           "Avoid sequences such as 123, abc or qwerty."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 5,
       "label": "Lab workstation",
-      "checked_at": "2026-10-30T06:24:07",
+      "checked_at": "2026-10-31T06:22:50",
       "analysis": {
         "score": 17,
         "rating": "Very Weak",
@@ -153,13 +163,14 @@
           "Add at least one digit.",
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid common words and well-known passwords."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 6,
       "label": "Alumni portal",
-      "checked_at": "2026-11-02T07:17:07",
+      "checked_at": "2026-11-03T07:15:50",
       "analysis": {
         "score": 30,
         "rating": "Weak",
@@ -181,13 +192,14 @@
           "Add at least one uppercase letter.",
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid common words and well-known passwords."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 7,
       "label": "Admin console",
-      "checked_at": "2026-08-28T23:58:07",
+      "checked_at": "2026-08-29T23:56:50",
       "analysis": {
         "score": 15,
         "rating": "Very Weak",
@@ -211,13 +223,14 @@
           "Add at least one digit.",
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid common words and well-known passwords."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 8,
       "label": "Print kiosk",
-      "checked_at": "2026-08-30T08:26:07",
+      "checked_at": "2026-08-31T08:24:50",
       "analysis": {
         "score": 7,
         "rating": "Very Weak",
@@ -242,13 +255,16 @@
           "Add at least one lowercase letter.",
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid common words and well-known passwords."
+        ],
+        "patterns": [
+          "repeat"
         ]
       }
     },
     {
       "id": 9,
       "label": "Shared calendar",
-      "checked_at": "2026-10-25T16:05:07",
+      "checked_at": "2026-10-26T16:03:50",
       "analysis": {
         "score": 23,
         "rating": "Weak",
@@ -271,13 +287,14 @@
           "Add at least one digit.",
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid common words and well-known passwords."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 10,
       "label": "Sports forum",
-      "checked_at": "2026-09-30T23:42:07",
+      "checked_at": "2026-10-01T23:40:50",
       "analysis": {
         "score": 23,
         "rating": "Weak",
@@ -300,13 +317,14 @@
           "Add at least one digit.",
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid common words and well-known passwords."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 11,
       "label": "Music account",
-      "checked_at": "2026-10-29T14:02:07",
+      "checked_at": "2026-10-30T14:00:50",
       "analysis": {
         "score": 25,
         "rating": "Weak",
@@ -329,13 +347,14 @@
           "Add at least one digit.",
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid common words and well-known passwords."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 12,
       "label": "Guest laptop",
-      "checked_at": "2026-09-29T08:52:07",
+      "checked_at": "2026-09-30T08:50:50",
       "analysis": {
         "score": 17,
         "rating": "Very Weak",
@@ -359,13 +378,14 @@
           "Add at least one digit.",
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid common words and well-known passwords."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 13,
       "label": "Weather app",
-      "checked_at": "2026-09-23T17:06:07",
+      "checked_at": "2026-09-24T17:04:50",
       "analysis": {
         "score": 17,
         "rating": "Very Weak",
@@ -389,13 +409,14 @@
           "Add at least one digit.",
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid common words and well-known passwords."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 14,
       "label": "Course forum",
-      "checked_at": "2026-10-18T04:26:07",
+      "checked_at": "2026-10-19T04:24:50",
       "analysis": {
         "score": 31,
         "rating": "Weak",
@@ -417,58 +438,65 @@
           "Add at least one uppercase letter.",
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid sequences such as 123, abc or qwerty."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 15,
       "label": "Library catalogue",
-      "checked_at": "2026-09-09T09:15:07",
+      "checked_at": "2026-09-10T09:13:50",
       "analysis": {
-        "score": 74,
-        "rating": "Strong",
+        "score": 55,
+        "rating": "Fair",
         "length": 11,
         "has_upper": true,
         "has_lower": true,
         "has_digit": true,
         "has_special": false,
         "char_classes": 3,
-        "entropy_bits": 59.54,
-        "crack_time": "about 13 years",
+        "entropy_bits": 7.64,
+        "crack_time": "less than a second",
         "issues": [],
         "suggestions": [
           "Aim for 12 or more characters for better resilience.",
           "Add at least one symbol (e.g. ! @ # $).",
           "Good work! Use a unique password for each account."
+        ],
+        "patterns": [
+          "year"
         ]
       }
     },
     {
       "id": 16,
       "label": "Email backup",
-      "checked_at": "2026-11-15T14:31:07",
+      "checked_at": "2026-11-16T14:29:50",
       "analysis": {
-        "score": 81,
-        "rating": "Very Strong",
+        "score": 60,
+        "rating": "Strong",
         "length": 11,
         "has_upper": true,
         "has_lower": true,
         "has_digit": true,
         "has_special": true,
         "char_classes": 4,
-        "entropy_bits": 65.55,
-        "crack_time": "about 856 years",
+        "entropy_bits": 7.64,
+        "crack_time": "less than a second",
         "issues": [],
         "suggestions": [
           "Aim for 12 or more characters for better resilience.",
           "Good work! Use a unique password for each account."
+        ],
+        "patterns": [
+          "year"
         ]
       }
     },
     {
       "id": 17,
       "label": "Cloud drive",
-      "checked_at": "2026-08-10T06:29:07",
+      "checked_at": "2026-08-11T06:27:50",
       "analysis": {
         "score": 43,
         "rating": "Fair",
@@ -486,13 +514,14 @@
         "suggestions": [
           "Aim for 12 or more characters for better resilience.",
           "Avoid common words and well-known passwords."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 18,
       "label": "Banking demo",
-      "checked_at": "2026-10-31T01:46:07",
+      "checked_at": "2026-11-01T01:44:50",
       "analysis": {
         "score": 85,
         "rating": "Very Strong",
@@ -508,34 +537,38 @@
         "suggestions": [
           "Aim for 12 or more characters for better resilience.",
           "Good work! Use a unique password for each account."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 19,
       "label": "Research wiki",
-      "checked_at": "2026-09-27T23:22:07",
+      "checked_at": "2026-09-28T23:20:50",
       "analysis": {
-        "score": 83,
-        "rating": "Very Strong",
+        "score": 60,
+        "rating": "Strong",
         "length": 12,
         "has_upper": true,
         "has_lower": true,
         "has_digit": true,
         "has_special": true,
         "char_classes": 4,
-        "entropy_bits": 68.82,
-        "crack_time": "about 8 thousand years",
+        "entropy_bits": 7.64,
+        "crack_time": "less than a second",
         "issues": [],
         "suggestions": [
           "Good work! Use a unique password for each account."
+        ],
+        "patterns": [
+          "year"
         ]
       }
     },
     {
       "id": 20,
       "label": "Dev repository",
-      "checked_at": "2026-11-10T22:42:07",
+      "checked_at": "2026-11-11T22:40:50",
       "analysis": {
         "score": 83,
         "rating": "Very Strong",
@@ -551,13 +584,14 @@
         "suggestions": [
           "Aim for 12 or more characters for better resilience.",
           "Good work! Use a unique password for each account."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 21,
       "label": "VPN client",
-      "checked_at": "2026-09-12T03:29:07",
+      "checked_at": "2026-09-13T03:27:50",
       "analysis": {
         "score": 80,
         "rating": "Very Strong",
@@ -573,13 +607,14 @@
         "suggestions": [
           "Aim for 12 or more characters for better resilience.",
           "Good work! Use a unique password for each account."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 22,
       "label": "Phone hotspot",
-      "checked_at": "2026-08-05T07:19:07",
+      "checked_at": "2026-08-06T07:17:50",
       "analysis": {
         "score": 85,
         "rating": "Very Strong",
@@ -595,13 +630,14 @@
         "suggestions": [
           "Aim for 12 or more characters for better resilience.",
           "Good work! Use a unique password for each account."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 23,
       "label": "Gaming account",
-      "checked_at": "2026-08-19T12:52:07",
+      "checked_at": "2026-08-20T12:50:50",
       "analysis": {
         "score": 48,
         "rating": "Fair",
@@ -619,35 +655,39 @@
         "suggestions": [
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid common words and well-known passwords."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 24,
       "label": "Photo storage",
-      "checked_at": "2026-08-08T16:51:07",
+      "checked_at": "2026-08-09T16:49:50",
       "analysis": {
-        "score": 85,
-        "rating": "Very Strong",
+        "score": 62,
+        "rating": "Strong",
         "length": 11,
         "has_upper": true,
         "has_lower": true,
         "has_digit": true,
         "has_special": true,
         "char_classes": 4,
-        "entropy_bits": 68.82,
-        "crack_time": "about 8 thousand years",
+        "entropy_bits": 7.64,
+        "crack_time": "less than a second",
         "issues": [],
         "suggestions": [
           "Aim for 12 or more characters for better resilience.",
           "Good work! Use a unique password for each account."
+        ],
+        "patterns": [
+          "year"
         ]
       }
     },
     {
       "id": 25,
       "label": "Notebook app",
-      "checked_at": "2026-09-01T05:23:07",
+      "checked_at": "2026-09-02T05:21:50",
       "analysis": {
         "score": 76,
         "rating": "Strong",
@@ -663,13 +703,14 @@
         "suggestions": [
           "Aim for 12 or more characters for better resilience.",
           "Good work! Use a unique password for each account."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 26,
       "label": "Messaging app",
-      "checked_at": "2026-10-23T06:10:07",
+      "checked_at": "2026-10-24T06:08:50",
       "analysis": {
         "score": 85,
         "rating": "Very Strong",
@@ -685,35 +726,39 @@
         "suggestions": [
           "Aim for 12 or more characters for better resilience.",
           "Good work! Use a unique password for each account."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 27,
       "label": "Shopping cart",
-      "checked_at": "2026-08-01T18:10:07",
+      "checked_at": "2026-08-02T18:08:50",
       "analysis": {
-        "score": 80,
-        "rating": "Very Strong",
+        "score": 60,
+        "rating": "Strong",
         "length": 10,
         "has_upper": true,
         "has_lower": true,
         "has_digit": true,
         "has_special": true,
         "char_classes": 4,
-        "entropy_bits": 62.27,
-        "crack_time": "about 88 years",
+        "entropy_bits": 7.64,
+        "crack_time": "less than a second",
         "issues": [],
         "suggestions": [
           "Aim for 12 or more characters for better resilience.",
           "Good work! Use a unique password for each account."
+        ],
+        "patterns": [
+          "year"
         ]
       }
     },
     {
       "id": 28,
       "label": "Fitness tracker",
-      "checked_at": "2026-11-14T16:57:07",
+      "checked_at": "2026-11-15T16:55:50",
       "analysis": {
         "score": 92,
         "rating": "Very Strong",
@@ -728,13 +773,14 @@
         "issues": [],
         "suggestions": [
           "Good work! Use a unique password for each account."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 29,
       "label": "Recipe box",
-      "checked_at": "2026-11-16T05:52:07",
+      "checked_at": "2026-11-17T05:50:50",
       "analysis": {
         "score": 77,
         "rating": "Strong",
@@ -750,35 +796,39 @@
         "suggestions": [
           "Aim for 12 or more characters for better resilience.",
           "Good work! Use a unique password for each account."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 30,
       "label": "Travel planner",
-      "checked_at": "2026-10-31T03:42:07",
+      "checked_at": "2026-11-01T03:40:50",
       "analysis": {
-        "score": 85,
-        "rating": "Very Strong",
+        "score": 62,
+        "rating": "Strong",
         "length": 11,
         "has_upper": true,
         "has_lower": true,
         "has_digit": true,
         "has_special": true,
         "char_classes": 4,
-        "entropy_bits": 68.82,
-        "crack_time": "about 8 thousand years",
+        "entropy_bits": 7.64,
+        "crack_time": "less than a second",
         "issues": [],
         "suggestions": [
           "Aim for 12 or more characters for better resilience.",
           "Good work! Use a unique password for each account."
+        ],
+        "patterns": [
+          "year"
         ]
       }
     },
     {
       "id": 31,
       "label": "Personal wiki",
-      "checked_at": "2026-09-25T08:18:07",
+      "checked_at": "2026-09-26T08:16:50",
       "analysis": {
         "score": 69,
         "rating": "Strong",
@@ -800,13 +850,14 @@
           "Add at least one digit.",
           "Add at least one symbol (e.g. ! @ # $).",
           "Avoid repeated characters."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 32,
       "label": "Password manager",
-      "checked_at": "2026-11-01T08:21:07",
+      "checked_at": "2026-11-02T08:19:50",
       "analysis": {
         "score": 100,
         "rating": "Very Strong",
@@ -821,13 +872,14 @@
         "issues": [],
         "suggestions": [
           "Good work! Use a unique password for each account."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 33,
       "label": "Server SSH key",
-      "checked_at": "2026-11-03T12:06:07",
+      "checked_at": "2026-11-04T12:04:50",
       "analysis": {
         "score": 100,
         "rating": "Very Strong",
@@ -842,13 +894,14 @@
         "issues": [],
         "suggestions": [
           "Good work! Use a unique password for each account."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 34,
       "label": "Encryption test",
-      "checked_at": "2026-11-05T07:51:07",
+      "checked_at": "2026-11-06T07:49:50",
       "analysis": {
         "score": 100,
         "rating": "Very Strong",
@@ -863,13 +916,14 @@
         "issues": [],
         "suggestions": [
           "Good work! Use a unique password for each account."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 35,
       "label": "Security audit",
-      "checked_at": "2026-09-01T16:36:07",
+      "checked_at": "2026-09-02T16:34:50",
       "analysis": {
         "score": 59,
         "rating": "Fair",
@@ -886,13 +940,14 @@
         ],
         "suggestions": [
           "Avoid sequences such as 123, abc or qwerty."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 36,
       "label": "Strong passphrase",
-      "checked_at": "2026-09-27T13:28:07",
+      "checked_at": "2026-09-28T13:26:50",
       "analysis": {
         "score": 92,
         "rating": "Very Strong",
@@ -909,13 +964,14 @@
         ],
         "suggestions": [
           "Avoid repeated characters."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 37,
       "label": "Boundary: single char",
-      "checked_at": "2026-09-10T18:47:07",
+      "checked_at": "2026-09-11T18:45:50",
       "analysis": {
         "score": 17,
         "rating": "Very Weak",
@@ -937,13 +993,14 @@
           "Add at least one uppercase letter.",
           "Add at least one digit.",
           "Add at least one symbol (e.g. ! @ # $)."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 38,
       "label": "Boundary: two chars",
-      "checked_at": "2026-10-26T10:54:07",
+      "checked_at": "2026-10-27T10:52:50",
       "analysis": {
         "score": 26,
         "rating": "Weak",
@@ -964,38 +1021,44 @@
           "Mix uppercase, lowercase, digits and symbols.",
           "Add at least one uppercase letter.",
           "Add at least one symbol (e.g. ! @ # $)."
-        ]
+        ],
+        "patterns": []
       }
     },
     {
       "id": 39,
       "label": "Boundary: eight chars",
-      "checked_at": "2026-10-12T09:28:07",
+      "checked_at": "2026-10-13T09:26:50",
       "analysis": {
-        "score": 40,
-        "rating": "Fair",
+        "score": 36,
+        "rating": "Weak",
         "length": 8,
         "has_upper": true,
         "has_lower": true,
         "has_digit": true,
         "has_special": false,
         "char_classes": 3,
-        "entropy_bits": 28.58,
+        "entropy_bits": 9.49,
         "crack_time": "less than a second",
         "issues": [
-          "Contains a character sequence or keyboard pattern"
+          "Contains a character sequence or keyboard pattern",
+          "Contains a keyboard walk pattern"
         ],
         "suggestions": [
           "Aim for 12 or more characters for better resilience.",
           "Add at least one symbol (e.g. ! @ # $).",
-          "Avoid sequences such as 123, abc or qwerty."
+          "Avoid sequences such as 123, abc or qwerty.",
+          "Avoid keyboard walks such as qwerty or 1qaz."
+        ],
+        "patterns": [
+          "spatial"
         ]
       }
     },
     {
       "id": 40,
       "label": "Edge: empty password",
-      "checked_at": "2026-08-14T12:20:07",
+      "checked_at": "2026-08-15T12:18:50",
       "analysis": {
         "score": 0,
         "rating": "Very Weak",
@@ -1012,7 +1075,8 @@
         ],
         "suggestions": [
           "Choose a password with at least 12 characters."
-        ]
+        ],
+        "patterns": []
       }
     }
   ]

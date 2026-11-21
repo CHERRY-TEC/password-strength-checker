@@ -21,9 +21,9 @@ const EXPECTED = [
   ['P@ssw0rd', 43, 'Fair', 14.75],
   ['vL8!qZ#2wR@6tY&1c', 100, 'Very Strong', 111.43],
   ['correct horse battery staple', 69, 'Strong', 96.36],
-  ['aaaaaaaaaaaaaaaaaaaa', 35, 'Weak', 49.35],
-  ['abcdefghijklmnop', 40, 'Fair', 45.12],
-  ['1234567890123456', 12, 'Very Weak', 7.77],
+  ['aaaaaaaaaaaaaaaaaaaa', 19, 'Very Weak', 6.29],
+  ['abcdefghijklmnop', 34, 'Weak', 9.75],
+  ['1234567890123456', 12, 'Very Weak', 7.32],
 ];
 
 test('scores, ratings and entropy match the Python engine', () => {
@@ -78,6 +78,30 @@ test('crack time is human readable and bounded', () => {
 
 test('non-string input is coerced safely', () => {
   assert.equal(typeof analyzePassword(1234).score, 'number');
+});
+
+test('advanced structural patterns are detected', () => {
+  assert.ok(analyzePassword('qwertyuiop123').patterns.includes('spatial'));
+  assert.ok(analyzePassword('01011990').patterns.includes('date'));
+  assert.ok(analyzePassword('aaaaaaaaaaaaaaaaaaaa').patterns.includes('repeat'));
+  assert.deepEqual(analyzePassword('vL8!qZ#2wR@6tY&1c').patterns, []);
+});
+
+test('invariants hold for every sample password', () => {
+  const bands = [[20, 'Very Weak'], [40, 'Weak'], [60, 'Fair'], [80, 'Strong'], [101, 'Very Strong']];
+  for (const [, password] of global.window.Analyzer.SAMPLE_DATA) {
+    const result = analyzePassword(password);
+    assert.ok(result.score >= 0 && result.score <= 100);
+    assert.ok(result.entropy_bits >= 0);
+    assert.ok(result.crack_time.length > 0);
+    assert.ok(result.char_classes <= 4);
+    assert.ok(result.suggestions.length <= 6);
+    const expected = bands.find(([ceiling]) => result.score < ceiling)[1];
+    assert.equal(result.rating, expected);
+  }
+  for (const secret of ['X9#mL2@vT7!qR4$p', 'vL8!qZ#2wR@6tY&1c', 'Purple-Coffee-Mountain-42']) {
+    assert.equal(JSON.stringify(analyzePassword(secret)).includes(secret), false);
+  }
 });
 
 test('rules are structured and complete', () => {

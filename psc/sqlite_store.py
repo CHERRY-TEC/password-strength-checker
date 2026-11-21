@@ -18,14 +18,19 @@ from typing import Any
 
 from .config import APP_NAME, SCHEMA_VERSION
 from .models import PasswordRecord
+from .patterns import StorageStrategy
 from .storage import StorageError, _backup_file
 
 
-class SQLiteStore:
+class SQLiteStore(StorageStrategy):
     """Read/write records from a transactional SQLite database."""
 
     def __init__(self, path: Path) -> None:
         self.path = Path(path)
+
+    @property
+    def name(self) -> str:
+        return "sqlite"
 
     def exists(self) -> bool:
         return self.path.is_file()

@@ -101,6 +101,7 @@ class AnalysisResult:
     crack_time: str
     issues: list[str] = field(default_factory=list)
     suggestions: list[str] = field(default_factory=list)
+    patterns: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         """Serialise to a JSON/CSV friendly dictionary."""
@@ -117,6 +118,7 @@ class AnalysisResult:
             "crack_time": self.crack_time,
             "issues": list(self.issues),
             "suggestions": list(self.suggestions),
+            "patterns": list(self.patterns),
         }
 
     @classmethod
@@ -144,6 +146,7 @@ class AnalysisResult:
             ),
             issues=_as_str_list(data.get("issues")),
             suggestions=_as_str_list(data.get("suggestions")),
+            patterns=_as_str_list(data.get("patterns")),
         )
 
 

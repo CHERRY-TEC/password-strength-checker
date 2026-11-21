@@ -48,7 +48,7 @@ class StorageTests(unittest.TestCase):
         self.assertEqual(warnings, [])
         self.assertEqual(len(restored), 1)
         self.assertEqual(restored[0].label, "CSV account")
-        self.assertEqual(restored[0].analysis.rating, "Very Strong")
+        self.assertEqual(restored[0].analysis.rating, make_record().analysis.rating)
 
     def test_corrupt_json_is_recovered(self):
         path = self.folder / "records.json"

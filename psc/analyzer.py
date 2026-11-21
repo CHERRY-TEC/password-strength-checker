@@ -13,6 +13,7 @@ import re
 from collections import Counter
 
 from .config import GUESSES_PER_SECOND
+from .heuristics import collect_matches, minimum_entropy, pattern_names
 from .models import AnalysisResult
 
 # --------------------------------------------------------------------------- #
@@ -173,6 +174,7 @@ def analyze_password(password: str) -> AnalysisResult:
     repetition = _repetition_ratio(password)
     sequence_found = _has_sequence(password)
     common_found = _has_common_word(password)
+    matches = collect_matches(password)
 
     pool = _char_pool(password)
     entropy = length * math.log2(pool)
@@ -181,6 +183,13 @@ def analyze_password(password: str) -> AnalysisResult:
         entropy *= 0.60
     if common_found:
         entropy *= 0.30
+
+    # Advanced matchers (keyboard walks, dates, repeated units) provide an
+    # independent upper bound on real entropy, following zxcvbn's approach of
+    # taking the weakest explanation of the password's structure.
+    match_entropy = minimum_entropy(matches)
+    if match_entropy is not None:
+        entropy = min(entropy, match_entropy)
     entropy = max(0.0, round(entropy, 2))
 
     # Crack time estimate: an attacker tries half the search space on average.
@@ -265,6 +274,13 @@ def analyze_password(password: str) -> AnalysisResult:
             issues.append(f"High character repetition ({repetition:.0%})")
             suggestions.append("Avoid repeated characters.")
 
+        if any(match.kind.startswith("spatial") for match in matches):
+            issues.append("Contains a keyboard walk pattern")
+            suggestions.append("Avoid keyboard walks such as qwerty or 1qaz.")
+        if any(match.kind == "date" for match in matches):
+            issues.append("Contains a date or year pattern")
+            suggestions.append("Avoid birthdays, anniversaries and years.")
+
     if not issues:
         suggestions.append("Good work! Use a unique password for each account.")
 
@@ -281,6 +297,7 @@ def analyze_password(password: str) -> AnalysisResult:
         crack_time=crack_time,
         issues=issues,
         suggestions=suggestions[:6],
+        patterns=pattern_names(matches),
     )
 
 

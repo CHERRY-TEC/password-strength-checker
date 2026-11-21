@@ -27,7 +27,9 @@ from .exporter import (
     export_markdown,
     export_text_audit,
 )
+from .logging_config import configure_logging, get_logger
 from .models import PasswordRecord
+from .patterns import CommandRegistry, MenuCommand, default_event_bus
 from .seed_data import generate_records
 from .sqlite_store import SQLiteStore
 from .storage import CSVStore, JSONStore, StorageError
@@ -81,13 +83,37 @@ class App:
         csv_path: Path = CSV_PATH,
         sqlite_path: Path = SQLITE_PATH,
         storage_format: str = "json",
+        log_level: str = "INFO",
+        log_file: Path | None = None,
     ) -> None:
+        self.logger = configure_logging(log_level, log_file)
         self.json_store = JSONStore(json_path)
         self.csv_store = CSVStore(csv_path)
         self.sqlite_store = SQLiteStore(sqlite_path)
         self.storage_format = storage_format if storage_format in SUPPORTED_FORMATS else "json"
         self.records: list[PasswordRecord] = []
         self.next_id: int = 1
+        self.events = default_event_bus()
+        self.commands = self._build_commands()
+
+    def _build_commands(self) -> CommandRegistry:
+        """Register menu actions as Command objects (no reflection dispatch)."""
+        handlers = {
+            "1": self._menu_check,
+            "2": self._menu_list,
+            "3": self._menu_search,
+            "4": self._menu_analytics,
+            "5": self._menu_export,
+            "6": self._menu_rules,
+            "7": self._menu_import,
+            "8": self._menu_seed,
+            "9": self._menu_settings,
+        }
+        return CommandRegistry([
+            MenuCommand(key, label, handlers[key])
+            for key, label in MENU_OPTIONS
+            if key in handlers
+        ])
 
     # ------------------------------------------------------------------ #
     # Infrastructure
@@ -111,9 +137,16 @@ class App:
         try:
             self.store.save(self.records)
         except StorageError as exc:
+            self.logger.error("persist_failed", extra={"event_name": "storage.failed"})
             ui.error(str(exc))
             return False
         ui.success(f"Saved {len(self.records)} record(s) to {self.store.path}")
+        self.logger.info("records_saved", extra={
+            "event_name": "storage.saved", "storage_format": self.storage_format,
+            "record_count": len(self.records), "path": str(self.store.path),
+        })
+        self.events.publish("records.saved", total=len(self.records),
+                            storage_format=self.storage_format)
         return True
 
     def _recalculate_ids(self) -> None:
@@ -137,6 +170,11 @@ class App:
         self.records = records
         self._report_warnings(warnings)
         self._recalculate_ids()
+        self.logger.info("app_started", extra={
+            "event_name": "app.started", "storage_format": self.storage_format,
+            "record_count": len(records), "path": str(self.store.path),
+        })
+        self.events.publish("app.started", storage_format=self.storage_format, total=len(records))
         if records:
             ui.success(f"Restored {len(records)} record(s) from local storage.")
         else:
@@ -160,16 +198,20 @@ class App:
                 except (KeyboardInterrupt, EOFError):
                     confirm_exit = True  # an exhausted input stream means "exit"
                 if confirm_exit:
+                    self.events.publish("app.stopped", total=len(self.records))
+                    self.logger.info("app_stopped", extra={
+                        "event_name": "app.stopped", "record_count": len(self.records),
+                    })
                     ui.success("Goodbye - your records have been saved locally.")
                     break
                 continue
 
-            handler = getattr(self, f"_menu_{self._handler_name(choice)}", None)
-            if handler is None:
+            command = self.commands.get(choice)
+            if command is None:
                 ui.error("Unknown option. Please try again.")
                 continue
             try:
-                handler()
+                command.execute()
             except (KeyboardInterrupt, EOFError):
                 print()
                 ui.info("Action cancelled. Returning to the main menu.")
@@ -177,20 +219,6 @@ class App:
                 ui.error(str(exc))
             except Exception as exc:  # noqa: BLE001 - keep the demo fault tolerant
                 ui.error(f"Unexpected error: {exc}")
-
-    @staticmethod
-    def _handler_name(choice: str) -> str:
-        return {
-            "1": "check",
-            "2": "list",
-            "3": "search",
-            "4": "analytics",
-            "5": "export",
-            "6": "rules",
-            "7": "import",
-            "8": "seed",
-            "9": "settings",
-        }[choice]
 
     # ------------------------------------------------------------------ #
     # Menu handlers
@@ -221,8 +249,15 @@ class App:
         self.records.append(record)
         self._persist()
 
+        self.events.publish("password.checked", record_id=record.id,
+                            score=result.score, rating=result.rating)
+        self.logger.info("password_checked", extra={
+            "event_name": "password.checked", "record_id": record.id,
+            "score": result.score, "rating": result.rating,
+        })
         if result.score < WEAK_SCORE_THRESHOLD:
             ui.warning("THRESHOLD FLAG: this password is weak - consider changing it.")
+            self.events.publish("alert.weak_password", record_id=record.id, score=result.score)
         ui.pause()
 
     def _menu_list(self) -> None:
@@ -400,6 +435,8 @@ class App:
         ui.success(
             f"Now using {target_format.upper()} ({len(self.records)} record(s) loaded from {target_store.path})."
         )
+        self.events.publish("storage.format_changed", storage_format=target_format,
+                            total=len(self.records))
 
 
 def run(storage_format: str = "json") -> None:

@@ -18,7 +18,10 @@ Security notes:
 from __future__ import annotations
 
 import argparse
+import hmac
 import json
+import os
+import secrets
 import tempfile
 import threading
 import webbrowser
@@ -39,6 +42,7 @@ from psc.config import (
     WEAK_SCORE_THRESHOLD,
 )
 from psc.exporter import export_chart_png, export_csv, export_markdown, export_text_audit
+from psc.logging_config import configure_logging
 from psc.models import PasswordRecord
 from psc.seed_data import generate_records
 from psc.sqlite_store import SQLiteStore
@@ -185,12 +189,19 @@ class Handler(BaseHTTPRequestHandler):
         )
         self.send_header("Cache-Control", "no-store")
 
-    def _send(self, status: int, body: bytes, content_type: str, extra: dict | None = None) -> None:
+    def _send(
+        self,
+        status: int,
+        body: bytes,
+        content_type: str,
+        extra: dict[str, str] | list[tuple[str, str]] | None = None,
+    ) -> None:
         self.send_response(status)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(body)))
         self._security_headers()
-        for key, value in (extra or {}).items():
+        headers = extra.items() if isinstance(extra, dict) else (extra or [])
+        for key, value in headers:
             self.send_header(key, value)
         self.end_headers()
         self.wfile.write(body)
@@ -242,7 +253,52 @@ class Handler(BaseHTTPRequestHandler):
         except OSError:
             self._error(404, f"Missing static asset: {filename}")
             return
-        self._send(200, body, MIME_TYPES[filename])
+        extra_headers: list[tuple[str, str]] = []
+        if filename == "index.html":
+            session = secrets.token_urlsafe(24)
+            extra_headers.extend([
+                ("Set-Cookie", f"psc_sid={session}; HttpOnly; SameSite=Strict; Path=/"),
+                ("Set-Cookie", f"psc_csrf={session}; SameSite=Strict; Path=/"),
+            ])
+        self._send(200, body, MIME_TYPES[filename], extra_headers)
+
+    # ------------------------------ authentication ------------------------- #
+
+    def _cookie(self, name: str) -> str:
+        """Read a cookie value from the request headers."""
+        raw = self.headers.get("Cookie", "")
+        for part in raw.split(";"):
+            key, _, value = part.strip().partition("=")
+            if key == name:
+                return value
+        return ""
+
+    def _check_bearer(self) -> bool:
+        """Validate the optional shared-secret bearer token."""
+        expected = getattr(self.server, "auth_token", None)
+        if not expected:
+            return True
+        header = self.headers.get("Authorization", "")
+        if not header.startswith("Bearer "):
+            return False
+        return hmac.compare_digest(header[7:], expected)
+
+    def _check_csrf(self) -> bool:
+        """Validate the double-submit CSRF cookie/header pair."""
+        session = self._cookie("psc_sid")
+        csrf_cookie = self._cookie("psc_csrf")
+        csrf_header = self.headers.get("X-CSRF-Token", "")
+        return bool(
+            session
+            and csrf_cookie
+            and csrf_header
+            and hmac.compare_digest(session, csrf_cookie)
+            and hmac.compare_digest(session, csrf_header)
+        )
+
+    def _check_write_security(self) -> bool:
+        """Require origin checks, bearer token and CSRF double-submit."""
+        return self._check_origin() and self._check_bearer() and self._check_csrf()
 
     # -------------------------------- GET ---------------------------------- #
 
@@ -255,11 +311,23 @@ class Handler(BaseHTTPRequestHandler):
             if path.lstrip("/") in STATIC_FILES:
                 return self._static(path.lstrip("/"))
 
+            if path == "/api/config.js":
+                required = "true" if getattr(self.server, "auth_token", None) else "false"
+                return self._send(
+                    200,
+                    f"window.PSC_AUTH_REQUIRED = {required};\n".encode("utf-8"),
+                    "application/javascript; charset=utf-8",
+                )
+
+            if path.startswith("/api/") and not self._check_bearer():
+                return self._error(401, "Bearer token required")
+
             if path == "/api/state":
                 with self.state.lock:
                     return self._json(200, {
                         "ok": True,
                         "format": self.state.storage_format,
+                        "auth_required": bool(getattr(self.server, "auth_token", None)),
                         "total": len(self.state.records),
                         "json_path": str(self.state.json_store.path),
                         "csv_path": str(self.state.csv_store.path),
@@ -352,6 +420,10 @@ class Handler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         if not self._check_origin():
             return self._error(403, "Cross-origin requests are not allowed")
+        if not self._check_bearer():
+            return self._error(401, "Bearer token required")
+        if not self._check_csrf():
+            return self._error(403, "CSRF token missing or invalid")
         try:
             data = self._read_json()
         except (ValueError, json.JSONDecodeError) as exc:
@@ -489,6 +561,10 @@ class Handler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         if not self._check_origin():
             return self._error(403, "Cross-origin requests are not allowed")
+        if not self._check_bearer():
+            return self._error(401, "Bearer token required")
+        if not self._check_csrf():
+            return self._error(403, "CSRF token missing or invalid")
         if not path.startswith("/api/records/"):
             return self._error(404, "Unknown endpoint")
         try:
@@ -514,34 +590,50 @@ def serve(
     port: int = 8765,
     storage_format: str = "json",
     open_browser: bool = False,
+    token: str | None = None,
+    log_level: str = "INFO",
+    log_file: Path | None = None,
 ) -> int:
     """Start the local web server and block until interrupted."""
+    logger = configure_logging(log_level, log_file)
     state = WebState(storage_format)
     try:
         server = ThreadingHTTPServer((host, port), Handler)
     except OSError as exc:
+        logger.error("server_start_failed", extra={
+            "event_name": "server.start_failed", "path": f"{host}:{port}",
+        })
         print(f"Could not start the web server on {host}:{port}: {exc}")
         return 1
     server.state = state  # type: ignore[attr-defined]
     server.allow_remote = host not in LOCAL_HOSTS  # type: ignore[attr-defined]
+    server.auth_token = token or None  # type: ignore[attr-defined]
     server.daemon_threads = True
+    logger.info("server_started", extra={
+        "event_name": "server.started", "storage_format": storage_format,
+        "record_count": len(state.records), "path": f"{host}:{port}",
+    })
 
     url = f"http://{'localhost' if host in LOCAL_HOSTS else host}:{port}/"
-    print()
-    print("  Password Strength Checker - web interface")
-    print(f"  Open:  {url}")
-    print(f"  Data:  {state.store.path} ({state.storage_format.upper()})")
-    print("  Press Ctrl+C to stop.")
-    print()
+    logger.info("web_interface_ready", extra={
+        "event_name": "web.ready", "path": url,
+        "storage_format": state.storage_format,
+    })
     for warning in state.startup_warnings:
-        print(f"  [!] {warning}")
+        logger.warning("startup_warning", extra={
+            "event_name": "storage.warning", "message": warning,
+        })
+    # One user-facing line; all diagnostics go through structured logging.
+    print(f"  Password Strength Checker web UI: {url}")
+    if token:
+        print(f"  API token: {token}")
 
     if open_browser:
         webbrowser.open(url)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
-        print("\n  Web server stopped.")
+        logger.info("web_interface_stopped", extra={"event_name": "web.stopped"})
     finally:
         server.server_close()
     return 0
@@ -553,8 +645,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--port", type=int, default=8765, help="port (default: 8765)")
     parser.add_argument("--format", choices=SUPPORTED_FORMATS, default="json")
     parser.add_argument("--open", action="store_true", help="open a browser automatically")
+    parser.add_argument("--token", default=None,
+                        help="require this bearer token on API requests (or set PSC_API_TOKEN)")
+    parser.add_argument("--log-level", default="INFO",
+                        choices=("DEBUG", "INFO", "WARNING", "ERROR"))
+    parser.add_argument("--log-file", default=None, help="write structured JSON logs to this file")
     args = parser.parse_args(argv)
-    return serve(args.host, args.port, args.format, args.open)
+    token = args.token or os.environ.get("PSC_API_TOKEN") or None
+    log_file = Path(args.log_file).expanduser() if args.log_file else None
+    return serve(args.host, args.port, args.format, args.open, token, args.log_level, log_file)
 
 
 if __name__ == "__main__":

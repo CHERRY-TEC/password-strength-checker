@@ -29,6 +29,10 @@ of the **results** of past checks. It never stores the passwords themselves.
 | FR-10 | Web interface | `webui/server.py` (local) and `site/` (Vercel static build) |
 | FR-11 | Bulk CSV import | `CSVStore.load(repair=False)` / Tools tab |
 | FR-12 | Seed dataset | `psc/seed_data.py` (46 varied cases) |
+| FR-13 | Advanced entropy heuristics | `psc/heuristics.py` spatial/date/repeat matchers |
+| FR-14 | Structured logging | `psc/logging_config.py` JSON events + `--log-file` |
+| FR-15 | API authentication | CSRF double-submit + optional bearer token |
+| FR-16 | Design patterns | `psc/patterns.py` Strategy, Command and Observer |
 
 ## 4. Data design
 
@@ -60,14 +64,18 @@ clean templates; individual invalid rows are skipped with descriptive warnings.
 
 ## 5. Non-functional requirements
 
-- **Security:** loopback-only server, origin checks, CSP, static-file whitelist,
-  body-size limit, no password logging, no password in any persisted file.
+- **Security:** loopback-only server, origin checks, double-submit CSRF,
+  optional bearer token, CSP, static-file whitelist, body-size limit, structured
+  logging that never records passwords, and no password in any persisted file.
 - **Reliability:** central input validation, atomic JSON/CSV writes, SQLite
   transactions, defensive deserialisation, fault-tolerant menu loop.
+- **Observability:** JSON log events with named `event_name` fields and optional
+  file sink; domain events published through an observer bus.
 - **Portability:** zero required third-party packages; matplotlib is optional
   and only used for PNG export.
-- **Testability:** Python unit/integration tests and Node tests for the browser
-  engine; `python run_tests.py` runs everything.
+- **Testability:** unit, integration and property-style invariant tests in
+  Python plus Node tests for the browser engine; `python run_tests.py` runs
+  everything.
 - **Deployment:** `site/` is a static SPA deployed to Vercel; Vercel has no
   writable filesystem, so the cloud build keeps records in browser
   localStorage (metadata only). This is the deployment target, not a degraded
@@ -75,9 +83,10 @@ clean templates; individual invalid rows are skipped with descriptive warnings.
 
 ## 6. Verification
 
-- 20+ Python tests covering analyzer, models, JSON/CSV/SQLite storage, summary,
-  exporters and the HTTP API.
-- 10 Node tests covering the browser engine, including exact parity with the
+- 85+ Python tests covering analyzer, heuristics, design patterns, structured
+  logging, models, all three storage backends, summaries, exporters, invariants
+  and the HTTP API (including CSRF and bearer-token enforcement).
+- 11 Node tests covering the browser engine, including exact parity with the
   Python engine across 11 representative passwords (`scripts/build.py`).
 - Playwright browser tests for the local and deployed interfaces.
 - GitHub Actions runs compile checks, the full suite and the build validation

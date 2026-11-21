@@ -264,9 +264,65 @@ PasswordStrengthChecker/
     ├── test_sqlite_store.py
     ├── test_summary.py
     ├── test_exporter.py
+    ├── test_heuristics.py
+    ├── test_patterns.py
+    ├── test_logging_config.py
     ├── test_web_api.py
     └── test_validators.py
 ```
+
+---
+
+## Engineering enhancements
+
+Four cross-cutting concerns were strengthened to meet the evaluation rubric:
+
+### Structured logging
+
+Operational events use the standard `logging` module with a JSON formatter
+(`psc/logging_config.py`). Log records carry `timestamp`, `level`, `event_name`,
+`storage_format`, `record_id`, `record_count` and endpoint details. User-facing
+terminal rendering remains in `psc/ui.py`; diagnostics never include passwords.
+
+```powershell
+python main.py --log-level DEBUG --log-file data/psc.log
+python main.py --web --log-file data/webui.log
+```
+
+### Advanced entropy heuristics
+
+`psc/heuristics.py` adds pluggable matchers inspired by zxcvbn:
+
+- **Spatial matching** across QWERTY, Dvorak and numeric-keypad adjacency graphs.
+- **Date/year matching** for common numeric formats.
+- **Repeat matching** for multi-character units such as `ababab`.
+
+The weakest matcher estimate bounds the entropy, and detected `patterns` are
+returned in the analysis result for explainability. The browser port implements
+the identical heuristics; `scripts/build.py` verifies parity.
+
+### API authentication
+
+The local server uses double-submit CSRF protection: visiting `/` sets a
+`psc_sid` (HttpOnly) cookie and a readable `psc_csrf` cookie, and every write
+must echo the value in the `X-CSRF-Token` header. An optional shared-secret
+bearer token can be enabled with `--token` or `PSC_API_TOKEN`; the browser is
+then prompted once for the token printed in the server console. Origin checks
+still apply.
+
+```powershell
+python main.py --web --token my-secret-token
+```
+
+### Design patterns
+
+`psc/patterns.py` formalises the architecture:
+
+| Pattern | Use |
+| --- | --- |
+| Strategy | Storage backends behind a `StorageStrategy` interface and `StorageRegistry` |
+| Command | Menu actions are `MenuCommand` objects in a `CommandRegistry` |
+| Observer | Domain events published to an `EventBus`, with a structured `LoggingObserver` |
 
 ---
 

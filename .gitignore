@@ -6,6 +6,7 @@ venv/
 .pytest_cache/
 *.corrupt.*
 *.tmp
+*.log
 exports/*
 !exports/.gitkeep
 !exports/*-demo.*

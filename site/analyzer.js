@@ -103,6 +103,124 @@
     return 'about ' + Math.max(1, Math.round(value)) + ' ' + names[index];
   }
 
+  /* ---------------- zxcvbn-style structural matchers ---------------- */
+  function buildGraph(rows) {
+    const graph = Object.create(null);
+    const add = (a, b) => { (graph[a] || (graph[a] = new Set())).add(b); };
+    for (let r = 0; r < rows.length; r++) {
+      const row = rows[r];
+      for (let c = 0; c < row.length; c++) {
+        const ch = row[c];
+        if (c > 0) { add(ch, row[c - 1]); }
+        if (c < row.length - 1) { add(ch, row[c + 1]); }
+        if (r + 1 < rows.length) {
+          const below = rows[r + 1];
+          const offset = row.length > below.length ? 1 : 0;
+          for (const shift of [0, 1]) {
+            const nc = c - shift + offset;
+            if (nc >= 0 && nc < below.length) { add(ch, below[nc]); add(below[nc], ch); }
+          }
+        }
+      }
+    }
+    return graph;
+  }
+
+  const SPATIAL_GRAPHS = {
+    qwerty: buildGraph(['1234567890', 'qwertyuiop', 'asdfghjkl', 'zxcvbnm']),
+    dvorak: buildGraph(['1234567890', "'.,pyfgcrl", 'aoeuidhtns', ';qjkxbmwvz']),
+    keypad: buildGraph(['789', '456', '123', '0']),
+  };
+  const DATE_PATTERNS = [
+    ['date', /\d{2}[/-]\d{2}[/-]\d{4}/g],
+    ['date', /(?:19|20)\d{2}[01]\d[0-3]\d/g],
+    ['date', /[0-3]\d[01]\d(?:19|20)\d{2}/g],
+    ['year', /(?:19|20)\d{2}/g],
+  ];
+
+  function uniqueMatches(matches) {
+    const seen = new Set();
+    const result = [];
+    for (const match of matches) {
+      const key = match.kind + '|' + match.token;
+      if (!seen.has(key)) { seen.add(key); result.push(match); }
+    }
+    return result;
+  }
+
+  function spatialMatches(password, minimumLength) {
+    minimumLength = minimumLength || 4;
+    const lower = password.toLowerCase();
+    const results = [];
+    for (const [name, graph] of Object.entries(SPATIAL_GRAPHS)) {
+      let best = '';
+      for (let start = 0; start < lower.length; start++) {
+        for (let end = start + minimumLength; end <= lower.length; end++) {
+          const token = lower.slice(start, end);
+          let adjacent = true;
+          for (let i = 0; i < token.length - 1; i++) {
+            const neighbours = graph[token[i]] || new Set();
+            if (!neighbours.has(token[i + 1])) { adjacent = false; break; }
+          }
+          if (adjacent && token.length > best.length) best = token;
+          if (!adjacent) break;
+        }
+      }
+      if (best) {
+        const size = Object.keys(graph).length;
+        const entropy = Math.log2(Math.max(size, 2)) + Math.log2(best.length) + 2.0;
+        results.push({ kind: 'spatial:' + name, token: best, entropy: Math.round(entropy * 100) / 100 });
+      }
+    }
+    return results;
+  }
+
+  function dateMatches(password) {
+    const results = [];
+    for (const [kind, pattern] of DATE_PATTERNS) {
+      pattern.lastIndex = 0;
+      let match;
+      while ((match = pattern.exec(password)) !== null) {
+        const entropy = kind === 'date' ? Math.log2(365 * 200) : Math.log2(200);
+        results.push({ kind, token: match[0], entropy: Math.round(entropy * 100) / 100 });
+      }
+    }
+    return results;
+  }
+
+  function repeatMatches(password, minimumUnit) {
+    minimumUnit = minimumUnit || 1;
+    const results = [];
+    const length = password.length;
+    for (let unitLength = minimumUnit; unitLength <= Math.min(4, Math.floor(length / 2)); unitLength++) {
+      for (let start = 0; start < length; start++) {
+        const unit = password.slice(start, start + unitLength);
+        if (unit.length < unitLength) continue;
+        let repeats = 1;
+        while (password.slice(start + repeats * unitLength, start + (repeats + 1) * unitLength) === unit) {
+          repeats++;
+        }
+        if (repeats >= 3 || (repeats >= 2 && unitLength >= 2)) {
+          const entropy = Math.log2(Math.pow(26, unitLength)) + Math.log2(repeats);
+          results.push({ kind: 'repeat', token: unit.repeat(repeats), entropy: Math.round(entropy * 100) / 100 });
+        }
+      }
+    }
+    return uniqueMatches(results);
+  }
+
+  function collectMatches(password) {
+    return uniqueMatches(
+      spatialMatches(password).concat(dateMatches(password), repeatMatches(password))
+    );
+  }
+  function minimumEntropy(matches) {
+    return matches.length ? Math.min(...matches.map((m) => m.entropy)) : null;
+  }
+  function patternNames(matches) {
+    return [...new Set(matches.map((m) => m.kind.split(':')[0]))].sort();
+  }
+
   function analyzePassword(input) {
     var password = typeof input === 'string' ? input : String(input == null ? '' : input);
     var length = password.length;
@@ -118,11 +236,14 @@
     var repetition = repetitionRatio(password);
     var sequenceFound = hasSequence(password);
     var commonFound = hasCommonWord(password);
+    var matches = collectMatches(password);
 
     var entropy = length * Math.log2(charPool(password));
     entropy *= (1.0 - 0.5 * repetition);
     if (sequenceFound) entropy *= 0.60;
     if (commonFound) entropy *= 0.30;
+    var matchEntropy = minimumEntropy(matches);
+    if (matchEntropy !== null) entropy = Math.min(entropy, matchEntropy);
     entropy = Math.max(0, Math.round(entropy * 100) / 100);
 
     var guesses = Math.pow(2, entropy) / 2;
@@ -184,6 +305,14 @@
         issues.push('High character repetition (' + Math.round(repetition * 100) + '%)');
         suggestions.push('Avoid repeated characters.');
       }
+      if (matches.some((m) => m.kind.indexOf('spatial') === 0)) {
+        issues.push('Contains a keyboard walk pattern');
+        suggestions.push('Avoid keyboard walks such as qwerty or 1qaz.');
+      }
+      if (matches.some((m) => m.kind === 'date')) {
+        issues.push('Contains a date or year pattern');
+        suggestions.push('Avoid birthdays, anniversaries and years.');
+      }
     }
     if (!issues.length) suggestions.push('Good work! Use a unique password for each account.');
 
@@ -199,7 +328,8 @@
       entropy_bits: entropy,
       crack_time: crackTime,
       issues: issues,
-      suggestions: suggestions.slice(0, 6)
+      suggestions: suggestions.slice(0, 6),
+      patterns: patternNames(matches)
     };
   }
 

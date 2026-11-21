@@ -49,6 +49,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--host", default="127.0.0.1", help="web bind address (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=8765, help="web port (default: 8765)")
     parser.add_argument("--open", action="store_true", help="open a browser tab with --web")
+    parser.add_argument("--token", default=None,
+                        help="require this bearer token for web API requests")
+    parser.add_argument("--log-level", default="INFO",
+                        choices=("DEBUG", "INFO", "WARNING", "ERROR"))
+    parser.add_argument("--log-file", default=None, help="structured JSON log file")
     parser.add_argument(
         "--version",
         action="version",
@@ -65,14 +70,30 @@ def main(argv: list[str] | None = None) -> int:
 
     # Import after environment flags are set so configuration picks them up.
     if args.web:
+        from pathlib import Path
+
         from webui.server import serve  # noqa: PLC0415
 
-        return serve(args.host, args.port, args.format, args.open)
+        return serve(
+            args.host,
+            args.port,
+            args.format,
+            args.open,
+            args.token or os.environ.get("PSC_API_TOKEN") or None,
+            args.log_level,
+            Path(args.log_file).expanduser() if args.log_file else None,
+        )
 
-    from psc.app import run  # noqa: PLC0415
+    from pathlib import Path
+
+    from psc.app import App  # noqa: PLC0415
 
     try:
-        run(args.format)
+        App(
+            storage_format=args.format,
+            log_level=args.log_level,
+            log_file=Path(args.log_file).expanduser() if args.log_file else None,
+        ).run()
     except KeyboardInterrupt:
         print("\nInterrupted. Goodbye!")
         return 130

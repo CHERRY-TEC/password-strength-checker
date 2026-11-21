@@ -15,6 +15,20 @@ these endpoints; it uses the same analysis rules via `site/analyzer.js`.
 - Passwords appear only in the body of `POST /api/analyze`. They are analysed
   in memory, never logged, and never written to storage.
 
+## Authentication and CSRF
+
+Visiting `/` sets two cookies: `psc_sid` (HttpOnly) and `psc_csrf` (readable),
+both `SameSite=Strict`. Every `POST` and `DELETE` must echo the CSRF value in
+the `X-CSRF-Token` header; missing or mismatched values are rejected with 403.
+
+An optional shared secret can be enabled with `--token <secret>` or the
+`PSC_API_TOKEN` environment variable. When enabled, all `/api/*` requests
+require `Authorization: Bearer <secret>` (401 otherwise), and
+`GET /api/config.js` reports `window.PSC_AUTH_REQUIRED = true` so the frontend
+can prompt for the token once and keep it in `sessionStorage`.
+
+`GET /api/state` also returns `auth_required` so clients can discover the mode.
+
 ## Endpoints
 
 ### `GET /`
@@ -63,7 +77,8 @@ required and the analysis metadata is saved.
     "entropy_bits": 55.12,
     "crack_time": "about 2 days",
     "issues": [],
-    "suggestions": ["Good work! Use a unique password for each account."]
+    "suggestions": ["Good work! Use a unique password for each account."],
+    "patterns": []
   },
   "persisted": true,
   "flag": false,
