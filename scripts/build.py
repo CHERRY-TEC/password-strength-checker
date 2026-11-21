@@ -31,8 +31,15 @@ SAMPLES = [
 PARITY_SCRIPT = """
 global.window = global;
 require(process.argv[2]);
+const A = global.window.Analyzer;
 const samples = JSON.parse(process.argv[3]);
-console.log(JSON.stringify(samples.map((s) => [s, global.window.Analyzer.analyzePassword(s)])));
+const analyses = samples.map((s) => [s, A.analyzePassword(s)]);
+const history = analyses.slice(0, 4).map(([s, a], i) => ({ id: i + 1, analysis: a }));
+const novelty = analyses.map(([s, a]) => [
+  s, A.structuralDrift(a, history), A.structuralFingerprint(a),
+  A.portfolioDiversity(history.map((h) => h.analysis))
+]);
+console.log(JSON.stringify({ analyses, novelty }));
 """
 
 
@@ -61,22 +68,38 @@ def main() -> int:
         except subprocess.CalledProcessError as exc:
             return fail(f"browser engine failed to load: {exc}")
 
-    browser_results = json.loads(output)
+    browser = json.loads(output)
 
     sys.path.insert(0, str(ROOT))
     from psc.analyzer import analyze_password  # noqa: PLC0415
+    from psc.novelty import compare, fingerprint, portfolio_diversity  # noqa: PLC0415
 
     mismatches = []
-    for sample, browser in browser_results:
-        python = analyze_password(sample).to_dict()
-        if python != browser:
+    for sample, result in browser["analyses"]:
+        if analyze_password(sample).to_dict() != result:
             mismatches.append(sample)
     if mismatches:
         return fail(f"engine parity mismatch for {mismatches!r}")
 
+    history = [(index + 1, analyze_password(sample).to_dict())
+               for index, sample in enumerate(SAMPLES[:4])]
+    novelty_mismatches = []
+    for sample, drift, printed, diversity in browser["novelty"]:
+        analysis = analyze_password(sample).to_dict()
+        expected = (
+            compare(analysis, history).to_dict(),
+            fingerprint(analysis).to_dict(),
+            portfolio_diversity([item for _, item in history]),
+        )
+        if expected != (drift, printed, diversity):
+            novelty_mismatches.append(sample)
+    if novelty_mismatches:
+        return fail(f"Structural Drift Index parity mismatch for {novelty_mismatches!r}")
+
     total_bytes = sum((SITE / name).stat().st_size for name in REQUIRED_ASSETS)
     print(f"BUILD OK: {len(REQUIRED_ASSETS)} static assets, {total_bytes:,} bytes")
-    print(f"ENGINE PARITY OK: {len(browser_results)} passwords matched Python engine")
+    print(f"ENGINE PARITY OK: {len(browser['analyses'])} passwords matched Python engine")
+    print(f"SDI PARITY OK: {len(browser['novelty'])} fingerprints and drift reports matched")
     return 0
 
 

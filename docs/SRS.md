@@ -33,6 +33,7 @@ of the **results** of past checks. It never stores the passwords themselves.
 | FR-14 | Structured logging | `psc/logging_config.py` JSON events + `--log-file` |
 | FR-15 | API authentication | CSRF double-submit + optional bearer token |
 | FR-16 | Design patterns | `psc/patterns.py` Strategy, Command and Observer |
+| FR-17 | Novel adaptive risk analysis | `psc/novelty.py` Structural Drift Index (SDI) |
 
 ## 4. Data design
 
@@ -81,12 +82,34 @@ clean templates; individual invalid rows are skipped with descriptive warnings.
   localStorage (metadata only). This is the deployment target, not a degraded
   fallback — the local build intentionally uses durable file/SQLite storage.
 
-## 6. Verification
+## 6. Novel Algorithm - Structural Drift Index
 
-- 85+ Python tests covering analyzer, heuristics, design patterns, structured
-  logging, models, all three storage backends, summaries, exporters, invariants
-  and the HTTP API (including CSRF and bearer-token enforcement).
-- 11 Node tests covering the browser engine, including exact parity with the
+Conventional meters score a password in isolation. The Structural Drift Index
+(SDI) adds an adaptive dimension without compromising the privacy guarantee.
+
+- **Non-reversible fingerprint:** a six-feature structural signature (banded
+  length, classes, entropy, repetition, pool and a pattern bitmask) is derived
+  from an analysis. No raw characters, hashes or reversible data are retained.
+- **Hybrid distance:** weighted banded L1 distance over numeric features is
+  fused with Jaccard distance over the pattern bitmask into a bounded `[0, 1]`
+  structural distance.
+- **Adaptive advice:** the nearest prior structure, a personal risk score and
+  plain-language guidance warn when a new password closely resembles a
+  previously weak check.
+- **Portfolio diversity:** average pairwise structural distance quantifies how
+  varied a user's checked history is.
+
+The algorithm is implemented once in Python (`psc/novelty.py`) and ported
+identically to the browser (`site/analyzer.js`); `scripts/build.py` proves parity
+of fingerprints and drift reports on every build.
+
+## 7. Verification
+
+- 92 Python tests covering analyzer, heuristics, the Structural Drift Index,
+  design patterns, structured logging, models, all three storage backends,
+  summaries, exporters, invariants and the HTTP API (including CSRF and
+  bearer-token enforcement).
+- 13 Node tests covering the browser engine, including exact parity with the
   Python engine across 11 representative passwords (`scripts/build.py`).
 - Playwright browser tests for the local and deployed interfaces.
 - GitHub Actions runs compile checks, the full suite and the build validation

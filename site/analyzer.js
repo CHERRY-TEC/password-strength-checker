@@ -371,9 +371,110 @@
     ['Edge: keyboard walk', 'qwertyuiop123'], ['Edge: padded common', '!!password123!!']
   ];
 
+  /* ------------- Structural Drift Index (novel adaptive algorithm) ------ */
+  const LENGTH_LIMITS = [8, 12, 16, 24];
+  const ENTROPY_STEP = 16.0;
+  const POOL_SCALE = 10.0;
+  const NUMERIC_WEIGHTS = [0.25, 0.20, 0.25, 0.15, 0.15];
+  const NUMERIC_MAXIMA = [4.0, 4.0, 6.0, 1.0, 3.0];
+  const PATTERN_BITS = { spatial: 1, date: 2, repeat: 4, common: 8, sequence: 16 };
+  const round4 = (n) => Math.round(n * 10000) / 10000;
+
+  function lengthBand(length) {
+    let band = 0;
+    for (const limit of LENGTH_LIMITS) {
+      if (length >= limit) band++; else break;
+    }
+    return band;
+  }
+
+  function structuralFingerprint(analysis) {
+    const patterns = new Set(analysis.patterns || []);
+    const issues = (analysis.issues || []).join(' ').toLowerCase();
+    if (issues.includes('common password')) patterns.add('common');
+    if (issues.includes('sequence') || issues.includes('keyboard')) patterns.add('spatial');
+    const length = Number(analysis.length) || 0;
+    const entropy = Number(analysis.entropy_bits) || 0;
+    let mask = 0;
+    for (const [name, bit] of Object.entries(PATTERN_BITS)) {
+      if (patterns.has(name)) mask |= bit;
+    }
+    return {
+      length: lengthBand(length),
+      classes: Math.max(0, Math.min(4, Number(analysis.char_classes) || 0)),
+      entropy: Math.max(0, Math.min(6, Math.floor(entropy / ENTROPY_STEP))),
+      repetition: patterns.has('repeat') ? 1 : 0,
+      pool: Math.max(0, Math.min(3, Math.floor(entropy / Math.max(length, 1) * POOL_SCALE))),
+      pattern_mask: mask,
+    };
+  }
+
+  function jaccardBits(left, right) {
+    const union = left | right;
+    if (!union) return 0;
+    let both = left & right, count = 0;
+    while (both) { count += both & 1; both >>= 1; }
+    let total = 0; let bits = union;
+    while (bits) { total += bits & 1; bits >>= 1; }
+    return 1 - count / total;
+  }
+
+  function structuralDistance(left, right) {
+    const a = [left.length, left.classes, left.entropy, left.repetition, left.pool];
+    const b = [right.length, right.classes, right.entropy, right.repetition, right.pool];
+    let numeric = 0;
+    for (let i = 0; i < a.length; i++) {
+      numeric += NUMERIC_WEIGHTS[i] * Math.min(1, Math.abs(a[i] - b[i]) / NUMERIC_MAXIMA[i]);
+    }
+    numeric /= NUMERIC_WEIGHTS.reduce((x, y) => x + y, 0);
+    return round4(0.75 * numeric + 0.25 * jaccardBits(left.pattern_mask, right.pattern_mask));
+  }
+
+  function portfolioDiversity(analyses) {
+    if (analyses.length < 2) return 1;
+    const prints = analyses.map(structuralFingerprint);
+    let total = 0, pairs = 0;
+    for (let i = 0; i < prints.length; i++) {
+      for (let j = i + 1; j < prints.length; j++) {
+        total += structuralDistance(prints[i], prints[j]); pairs++;
+      }
+    }
+    return round4(total / pairs);
+  }
+
+  function driftAdvice(similarity) {
+    if (similarity >= 0.85) return 'Structurally very close to a previous check - try a different character mix.';
+    if (similarity >= 0.65) return 'Noticeable structural overlap with your history - consider more variety.';
+    return 'Distinct structure compared with your history - good variety.';
+  }
+
+  function structuralDrift(analysis, history) {
+    // history: array of { id, analysis }
+    if (!history.length) {
+      return { nearest_id: null, distance: 1, similarity: 0, diversity: 1,
+        personal_risk: 100 - Number(analysis.score || 0),
+        advice: 'No history yet - this check establishes your baseline.' };
+    }
+    const current = structuralFingerprint(analysis);
+    let best = { distance: Infinity, id: null };
+    for (const item of history) {
+      const d = structuralDistance(current, structuralFingerprint(item.analysis || item));
+      if (d < best.distance) best = { distance: d, id: item.id };
+    }
+    const similarity = round4(1 - best.distance);
+    const diversity = portfolioDiversity(history.map((item) => item.analysis || item));
+    const risk = Math.min(100, Math.round((100 - Number(analysis.score || 0)) * 0.7 + similarity * 30));
+    return { nearest_id: best.id, distance: best.distance, similarity, diversity,
+      personal_risk: risk, advice: driftAdvice(similarity) };
+  }
+
   global.Analyzer = {
     analyzePassword: analyzePassword,
     explainRules: explainRules,
-    SAMPLE_DATA: SAMPLE_DATA
+    SAMPLE_DATA: SAMPLE_DATA,
+    structuralFingerprint: structuralFingerprint,
+    structuralDistance: structuralDistance,
+    portfolioDiversity: portfolioDiversity,
+    structuralDrift: structuralDrift
   };
 })(window);

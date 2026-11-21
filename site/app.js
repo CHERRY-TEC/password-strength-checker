@@ -117,6 +117,26 @@ function schedulePreview() {
   const analysis = Analyzer.analyzePassword(password);
   renderMeter(analysis);
   renderResult(analysis, analysis.score < WEAK_THRESHOLD, null);
+  renderDrift(Analyzer.structuralDrift(analysis, historyItems()));
+}
+
+function historyItems(excludeId = null) {
+  return records
+    .filter((record) => record.id !== excludeId)
+    .map((record) => ({ id: record.id, analysis: record.analysis }));
+}
+
+function renderDrift(drift) {
+  const card = $('driftCard');
+  if (!card) return;
+  card.classList.remove('hidden');
+  const nearest = drift.nearest_id === null ? 'baseline' : `#${drift.nearest_id}`;
+  $('driftText').innerHTML =
+    `<div class="drift-line">Adaptive personal risk: <span class="drift-metric">${drift.personal_risk}/100</span> · ` +
+    `nearest structure: <span class="drift-metric">${escapeHtml(String(nearest))}</span> · ` +
+    `similarity: <span class="drift-metric">${Math.round(drift.similarity * 100)}%</span> · ` +
+    `portfolio diversity: <span class="drift-metric">${Math.round(drift.diversity * 100)}%</span></div>` +
+    `<div class="drift-line">${escapeHtml(drift.advice)}</div>`;
 }
 
 function renderMeter(analysis) {
@@ -184,6 +204,7 @@ function saveCheck() {
   if (!label) { toast('Add a label before saving the check.', 'warning'); $('labelInput').focus(); return; }
 
   const analysis = Analyzer.analyzePassword(password);
+  const drift = Analyzer.structuralDrift(analysis, historyItems());
   const record = {
     id: nextId++,
     label: label,
@@ -194,6 +215,7 @@ function saveCheck() {
   if (persistRecords()) {
     toast(`Check saved as record #${record.id}.`, 'success');
     renderResult(analysis, analysis.score < WEAK_THRESHOLD, record);
+    renderDrift(drift);
     $('passwordInput').value = '';
     $('saveBtn').disabled = true;
     resetMeter();
@@ -288,6 +310,7 @@ function buildSummary() {
     total, average_score: 0, median_score: 0, min_score: null, max_score: null,
     average_length: 0, weak_count: 0, strong_count: 0, weak_rate: 0, strong_rate: 0,
     rating_counts: {}, class_counts: {}, issue_counts: {}, per_day: {},
+    structural_diversity: 1,
     strongest: null, weakest: null, alerts: [],
   };
   if (!total) {
@@ -316,6 +339,7 @@ function buildSummary() {
   }
   summary.weak_rate = summary.weak_count / total;
   summary.strong_rate = summary.strong_count / total;
+  summary.structural_diversity = Analyzer.portfolioDiversity(records.map((r) => r.analysis));
   summary.strongest = records.reduce((best, r) => r.analysis.score > best.analysis.score ? r : best, records[0]);
   summary.weakest = records.reduce((worst, r) => r.analysis.score < worst.analysis.score ? r : worst, records[0]);
 
@@ -357,6 +381,8 @@ function renderSummary() {
     ['Average length', summary.total ? summary.average_length : '—', 'characters'],
     ['Weak share', summary.total ? `${Math.round(summary.weak_rate * 100)}%` : '—',
       `${summary.weak_count} of ${summary.total} records`],
+    ['Structural diversity', summary.total ? `${Math.round(summary.structural_diversity * 100)}%` : '—',
+      'portfolio variety (SDI)'],
   ];
   $('metricCards').innerHTML = cards.map(([label, value, sub]) => `
     <div class="metric"><div class="metric-label">${escapeHtml(label)}</div>

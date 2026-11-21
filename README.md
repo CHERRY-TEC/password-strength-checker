@@ -314,6 +314,26 @@ still apply.
 python main.py --web --token my-secret-token
 ```
 
+### Novel contribution — Structural Drift Index (SDI)
+
+`psc/novelty.py` implements an adaptive, **privacy-preserving risk algorithm**
+that is not a copy of an existing password-strength method:
+
+1. It derives a compact, **non-reversible structural fingerprint** (banded
+   length, classes, entropy, repetition, pool and a pattern bitmask) from an
+   analysis — no characters, hashes or reversible data are retained.
+2. A **hybrid distance metric** combines weighted banded L1 distance with
+   Jaccard distance over the pattern bitmask to produce a bounded `[0, 1]`
+   structural distance.
+3. It reports the **nearest prior structure**, a **personal risk score** and an
+   explainable recommendation — warning when a new password is structurally
+   close to a previously weak check.
+4. **Portfolio diversity** measures variety across the entire history.
+
+The same algorithm runs in the browser (`site/analyzer.js`), and the build step
+verifies exact parity of fingerprints and drift reports. It is surfaced in both
+web UIs as an "Adaptive Risk" card and in analytics as a diversity metric.
+
 ### Design patterns
 
 `psc/patterns.py` formalises the architecture:

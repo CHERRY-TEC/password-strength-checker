@@ -80,6 +80,14 @@ required and the analysis metadata is saved.
     "suggestions": ["Good work! Use a unique password for each account."],
     "patterns": []
   },
+  "drift": {
+    "nearest_id": 12,
+    "distance": 0.18,
+    "similarity": 0.82,
+    "diversity": 0.41,
+    "personal_risk": 47,
+    "advice": "Noticeable structural overlap with your history - consider more variety."
+  },
   "persisted": true,
   "flag": false,
   "record": { "id": 41, "label": "Banking demo", "checked_at": "...", "analysis": { ... } },
@@ -127,6 +135,7 @@ Returns aggregated metrics, distributions, alerts and record extremes.
     "common_issues": [{ "issue": "...", "count": 15 }],
     "per_day": [{ "day": "2026-11-20", "count": 3 }],
     "alerts": [{ "level": "critical", "message": "..." }],
+    "structural_diversity": 0.41,
     "strongest": { "...": "..." },
     "weakest": { "...": "..." }
   }

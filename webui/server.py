@@ -44,6 +44,8 @@ from psc.config import (
 from psc.exporter import export_chart_png, export_csv, export_markdown, export_text_audit
 from psc.logging_config import configure_logging
 from psc.models import PasswordRecord
+from psc.novelty import compare as compare_drift
+from psc.novelty import portfolio_diversity
 from psc.seed_data import generate_records
 from psc.sqlite_store import SQLiteStore
 from psc.storage import CSVStore, JSONStore, StorageError
@@ -147,6 +149,9 @@ def _summary_payload(records: list[PasswordRecord]) -> dict:
             for day, count in sorted(report.per_day.items(), reverse=True)[:10]
         ],
         "alerts": [{"level": level, "message": message} for level, message in build_alerts(report)],
+        "structural_diversity": portfolio_diversity(
+            [record.analysis.to_dict() for record in records]
+        ),
         "strongest": report.strongest.to_dict() if report.strongest else None,
         "weakest": report.weakest.to_dict() if report.weakest else None,
     }
@@ -461,9 +466,17 @@ class Handler(BaseHTTPRequestHandler):
         result = analyze_password(password)
         del password  # plaintext is never kept or written anywhere
 
+        with self.state.lock:
+            history = [
+                (record.id, record.analysis.to_dict())
+                for record in self.state.records
+            ]
+        drift = compare_drift(result.to_dict(), history)
+
         payload: dict = {
             "ok": True,
             "analysis": result.to_dict(),
+            "drift": drift.to_dict(),
             "persisted": persist,
             "flag": result.score < WEAK_SCORE_THRESHOLD,
         }

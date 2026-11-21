@@ -170,6 +170,7 @@ async function runAnalyze(persist) {
     currentAnalysis = data.analysis;
     renderMeter(data.analysis);
     renderResult(data.analysis, data.flag, data.record);
+    if (data.drift) renderDrift(data.drift);
 
     if (persist) {
       toast(`Check saved as record #${data.record.id}.`, 'success');
@@ -183,6 +184,19 @@ async function runAnalyze(persist) {
   } finally {
     setBusy(false);
   }
+}
+
+function renderDrift(drift) {
+  const card = $('driftCard');
+  if (!card) return;
+  card.classList.remove('hidden');
+  const nearest = drift.nearest_id === null ? 'baseline' : `#${drift.nearest_id}`;
+  $('driftText').innerHTML =
+    `<div class="drift-line">Adaptive personal risk: <span class="drift-metric">${drift.personal_risk}/100</span> · ` +
+    `nearest structure: <span class="drift-metric">${escapeHtml(String(nearest))}</span> · ` +
+    `similarity: <span class="drift-metric">${Math.round(drift.similarity * 100)}%</span> · ` +
+    `portfolio diversity: <span class="drift-metric">${Math.round(drift.diversity * 100)}%</span></div>` +
+    `<div class="drift-line">${escapeHtml(drift.advice)}</div>`;
 }
 
 function renderMeter(analysis) {
@@ -362,6 +376,8 @@ function renderSummary(summary) {
     ['Average length', summary.total ? summary.average_length : '—', 'characters'],
     ['Weak share', summary.total ? `${Math.round(summary.weak_rate * 100)}%` : '—',
       `${summary.weak_count} of ${summary.total} records`],
+    ['Structural diversity', summary.total ? `${Math.round((summary.structural_diversity || 0) * 100)}%` : '—',
+      'portfolio variety (SDI)'],
   ];
   $('metricCards').innerHTML = cards.map(([label, value, sub]) => `
     <div class="metric">

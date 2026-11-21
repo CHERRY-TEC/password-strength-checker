@@ -104,6 +104,36 @@ test('invariants hold for every sample password', () => {
   }
 });
 
+test('Structural Drift Index is deterministic, bounded and non-reversible', () => {
+  const A = global.window.Analyzer;
+  const first = A.structuralFingerprint(analyzePassword('X9#mL2@vT7!qR4$p'));
+  const second = A.structuralFingerprint(analyzePassword('X9#mL2@vT7!qR4$p'));
+  assert.deepEqual(first, second);
+  assert.equal(JSON.stringify(first).includes('X9#mL2'), false);
+
+  const a = A.structuralFingerprint(analyzePassword('password'));
+  const b = A.structuralFingerprint(analyzePassword('X9#mL2@vT7!qR4$p'));
+  assert.equal(A.structuralDistance(a, a), 0);
+  assert.equal(A.structuralDistance(a, b), A.structuralDistance(b, a));
+  assert.ok(A.structuralDistance(a, b) >= 0 && A.structuralDistance(a, b) <= 1);
+  assert.equal(A.portfolioDiversity([]), 1);
+});
+
+test('structural drift finds the nearest history entry', () => {
+  const A = global.window.Analyzer;
+  const target = analyzePassword('aaaaaaaaaaaaaaaaaaaa');
+  const history = [
+    { id: 1, analysis: analyzePassword('X9#mL2@vT7!qR4$p') },
+    { id: 2, analysis: analyzePassword('aaaaaaaaaaaaaaaaaaaa') },
+    { id: 3, analysis: analyzePassword('correct horse battery staple') },
+  ];
+  const drift = A.structuralDrift(target, history);
+  assert.equal(drift.nearest_id, 2);
+  assert.ok(drift.similarity > 0.99);
+  assert.ok(drift.personal_risk >= 0 && drift.personal_risk <= 100);
+  assert.ok(drift.advice.length > 0);
+});
+
 test('rules are structured and complete', () => {
   const rules = explainRules();
   assert.ok(rules.length >= 5);
