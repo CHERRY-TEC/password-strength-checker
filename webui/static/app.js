@@ -68,6 +68,18 @@ function toast(message, kind = 'success') {
 }
 
 /* -------------------------------- navigation ----------------------------- */
+function initTheme() {
+  const saved = localStorage.getItem('psc_theme');
+  const theme = saved === 'light' || saved === 'dark' ? saved : 'dark';
+  document.documentElement.setAttribute('data-theme', theme);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', current);
+  localStorage.setItem('psc_theme', current);
+}
+
 function setTab(name) {
   document.querySelectorAll('.tab').forEach((tab) => {
     tab.classList.toggle('active', tab.dataset.tab === name);
@@ -554,6 +566,7 @@ async function exportReport(kind) {
 
 /* --------------------------------- wiring --------------------------------- */
 function wireEvents() {
+  $('themeToggle').addEventListener('click', toggleTheme);
   document.querySelectorAll('.tab').forEach((tab) => {
     tab.addEventListener('click', () => setTab(tab.dataset.tab));
   });
@@ -618,6 +631,7 @@ function wireEvents() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
   wireEvents();
   refreshState();
   loadRules();
