@@ -123,7 +123,7 @@ python -m webui.server --port 8765 --open
 
 | Tab | What it does |
 | --- | --- |
-| **Check** | Live strength preview as you type, score ring, characteristics, issues and suggestions. Passwords are analysed with `persist: false` (no record written); only **Save check** stores the result. |
+| **Check** | Live strength preview as you type, score ring, characteristics, issues and suggestions. Passwords are analysed with `persist: false` (no record written); only **Save check** stores the result. A header toggle switches between dark and light themes and remembers the choice. |
 | **Records** | Search/filter by keyword, rating and minimum score, paginated table, record detail view and delete. |
 | **Analytics** | Metric cards, CSS bar charts, rating distribution, character coverage, common issues, activity and threshold alerts. |
 | **Tools** | Seed sample data, bulk CSV import with row-error counts, JSON/CSV switching, reload from disk, report downloads (MD/TXT/CSV/PNG) and the strength-rule reference. |
