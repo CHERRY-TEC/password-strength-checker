@@ -141,6 +141,29 @@ python -m webui.server --port 8765 --open
 
 ---
 
+## Streamlit demo interface
+
+For a quick, visual demo there is also a **Streamlit** front end (`streamlit_app.py`).
+It reuses the same `psc` engine, storage, summary, novelty and exporter modules
+as the console and browser UIs — no duplicated logic. Like the rest of the
+project, it analyses the password in memory and discards it immediately.
+
+```powershell
+pip install streamlit>=1.30          # only dependency for the demo
+streamlit run streamlit_app.py
+# then open http://localhost:8765 (or the URL Streamlit prints)
+```
+
+| Page | What it does |
+| --- | --- |
+| **Analyze** | Enter a label and password, see rating, score, entropy, crack time, issues, suggestions and similarity to saved passwords; optionally save the analysis. |
+| **Records** | Search/filter by keyword, rating and minimum score, view details, seed sample data or clear history. |
+| **Analytics** | Metric cards, rating distribution, common issues, threshold alerts and Markdown/CSV/text exports. |
+| **Rules** | The strength rules returned by `explain_rules()`. |
+| **About** | Project links and privacy notes. |
+
+---
+
 ## Main menu
 
 ```
